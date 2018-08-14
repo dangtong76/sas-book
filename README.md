@@ -16,7 +16,7 @@
 
 ### Visual Analytics
 
-+ [Data Driven Content 가이드](./posts/SAS VisualAnalytics_Data_Driven_Content.md)
++ [Data Driven Content 가이드](./posts/SAS_VisualAnalytics_Data_Driven_Content.md)
 
 
 
