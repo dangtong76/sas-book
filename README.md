@@ -1,4 +1,4 @@
 # Introduction
 
-[SAS Viya SMP Installation Guid](./posts/SAS_Viya_SMP_Installation_guide.md)
+[SAS Viya 인스톨 가이드(싱글 머신)](./posts/SAS_Viya_SMP_Installation_guide.md)
 
