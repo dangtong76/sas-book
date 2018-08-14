@@ -34,11 +34,9 @@ gpasswd -a viyademo01 analytic
 gpasswd -a viyademo02 analytic
 ~~~
 
-
-
 ####setguid 설정
 
-/opt/sas/viya/config/data/modelsvr/astore 폴더를 analytic 그룹으로 변경하고, 특수권한 부여
+/opt/sas/viya/config/data/modelsvr/astore 폴더를 analytic 그룹으로 변경하고, 특수권한 부
 
 ~~~
 chown sas:analytic astore
