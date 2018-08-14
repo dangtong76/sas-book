@@ -525,7 +525,7 @@ gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
 
 
 ~~~
-rpm -qa at nfs-utils.x86_64 nfs-utils-lib.x86_64 gcc glibc firefox compat-libstdc++-33 compat-glibc GLIBC 2.12 libuuid libSM libXrender fontconfig libstdc++ zlib apr ksh numactl perl-Net-SSLeay libXext libXext.i686 libXp libXp.i686 libXts libXtst.i686 libgcc libgcc.i686 libpng12 libpng12.i686 python 2.7 xterm xauth libXmu uuid mod_ssl tcl
+rpm -qa at nfs-utils.x86_64 nfs-utils-lib.x86_64 gcc glibc firefox compat-libstdc++-33 compat-glibc GLIBC 2.12 libuuid libSM libXrender fontconfig libstdc++ zlib apr ksh numactl perl-Net-SSLeay libXext libXext.i686 libXp libXp.i686 libXts libXtst.i686 libgcc libgcc.i686 libpng12 libpng12.i686 python 2.7 xterm xauth libXmu uuid mod_ssl tcl
 
 ~~~
 
