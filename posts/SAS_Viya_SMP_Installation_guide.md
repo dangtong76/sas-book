@@ -2,7 +2,9 @@
 
 [TOC]
 
-## 0. Uninstall Viya
+## 0. Viya 삭제
+
+삭제시 자동으로 인스톨 디렉토리를 '_'를 prefix 로 붙여 백업 하게 됩니다.
 
 ~~~{bash}
 ansible-playbook deploy-cleanup.yml
@@ -10,11 +12,21 @@ ansible-playbook deploy-cleanup.yml
 
 
 
-## 1. Pre Task Installation
+## 1. 설치 사전 작업
+
+### 설치 환경
+
+SAS Viya 설치 관련 내용은 아래와 같습니다.
+
+| 항목               | 내용                         |
+| ------------------ | ---------------------------- |
+| 설치 유저          | root                         |
+| 설치 파일 위치     | /opt/sas/install             |
+| SAS Viya 설치 위치 | /opt/sas/viya, /opt/sas/spre |
 
 
 
-### 사용자 생성및 디렉토리 생성
+### 유저 생성 및 디렉토리 생성
 
 ~~~bash
 # 사용자 추가
@@ -30,21 +42,21 @@ chown -R sas:sas /opt/sas
 
 
 
-### File Upload
+### 파일 업로드
 
-SOE(SAS Order Email) 에 첨부된 SAS_Viya_deployment.zip 파일을 다운받아 서버의 HOME  디렉토리에 업로드
+SOE (SAS Order Email) 에 첨부된 SAS_Viya_deployment.zip 파일을 다운받아 서버의 HOME  디렉토리에 업로드
 
 ![order_mail_1](../img/order_mail_1.png)
 
 
 
+### SAS CLI 유틸리티 다운로드
 
+[SAS Viya Command line Interface Utility](https://support.sas.com/en/documentation/install-center/sas-viya/deployment-tools/command-line-interface.html)  웹사이트 에서 운영체제에 맞는 CLI 다운로드
 
-[SAS Viya Command line Interface Utility](https://support.sas.com/en/documentation/install-center/sas-viya/deployment-tools/command-line-interface.html) 웹사이트 에서 운영체제에 맞는 CLI 다운로드
+다운로드 대상파일 : sas-orchestration.tgz
 
 ![image-20180727163046658](../img/image-20180727163046658.png)
-
-다운로드 파일 : sas-orchestration.tgz
 
 
 
@@ -202,7 +214,7 @@ tar -xvf SAS_Viya_playbook.tar
 #### Epel
 
 ~~~bash
-sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majversion.noarch.rpm
 ~~~
 
 > $majversion 에 리눅스 버전 추가 
@@ -322,23 +334,17 @@ sudo yum install -y python-pip gcc wget automake libffi-devel python-six
 sudo yum remove -y epel-release
 ~~~
 
-![그림1](../img/그림1.png)
-
 + PIP 업그레이드
 
 ~~~
 sudo pip install --upgrade pip setuptools
 ~~~
 
-![그림2](../img/그림2.png)
-
 + Ansible 설치
 
 ~~~
-sudo pip install ansible==2.3.2
+sudo pip install ansible==2.4.1
 ~~~
-
-![그림3](../img/그림3.png)
 
 + 설치 확인
 
@@ -347,18 +353,20 @@ ansible --version
 ansible localhost -m ping
 ~~~
 
-![그림4](../img/그림4.png)
+
 
 ### 커널변수 설정
 
-~~~
-# vi /etc/ssh/sshd_config
++ /etc/ssh/sshd_config 파일 수정
 
+~~~
 MaxStartups 100
 MaxSessions 100
+~~~
 
-# vi /etc/security/limits.conf
++ /etc/security/limits.conf 파일 수정
 
+~~~
 *	soft	nproc	100000
 *	hard	nproc	100000
 *	soft	nofile	350000
@@ -370,22 +378,17 @@ sas	-	nofile	150000
 sas	-	stack	10240
 ~~~
 
-![그림5](../img/그림5.png)
++ /etc/security/limits.d/20-nproc.conf 파일 수정
 
 ~~~bash
-vi /etc/security/limits.d/20-nproc.conf
-
 *          soft    nproc     150000
 root       soft    nproc     unlimited
 *       -       nproc   100000
 ~~~
 
-![그림6](../img/그림6.png)
++ /etc/sysctl.conf 파일 수정
 
 ~~~
-# kernel.sem과 net.core.somaxconn 정보 설정
-vi /etc/sysctl.conf
-
 kernel.shmmni = 4096
 kernel.sem = 512 32000 256 1024
 net.core.somaxconn = 2048
@@ -393,19 +396,15 @@ net.ipv4.ip_local_port_range = 9000 65500
 net.core.rmem_default = 262144
 ~~~
 
-![그림7](../img/그림7.png)
++ 설정 변경 확인
 
 ~~~
-sudo sysctl -p
+sysctl -p
 ~~~
 
-![그림8](../img/그림8.png)
-
-
++ /etc/systemd/system.conf 파일 수정
 
 ~~~
-vi /etc/systemd/system.conf
-
 DefaultTimeoutStartSec=1800s
 DefaultTimeoutStopSec=1800s
 ~~~
