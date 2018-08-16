@@ -142,7 +142,7 @@ radar.html
 
 1. Object Pane 에서 Other > Data-Driven Content 를 선택하여 Canvas 에 Drag&Drop 합니다.
 
-![image-20180731135141878](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731135141878.png)
+![image-20180731135141878](../img/image-20180731135141878.png)
 
 
 
@@ -150,17 +150,17 @@ radar.html
 
    http://{va-server-ip}/htmlcommons/radar.html 을 입력합니다.
 
-   ![image-20180731170124176](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731170124176.png)
+   ![image-20180731170124176](../img/image-20180731170124176.png)
 
 3. 오른쪽 Roles Pane 에서 **Variables** 에 아이템을 추가 합니다.
 
 > 아이템 추가 반듯이 unique 값인 id 컬럼도 추가 해야함
 
-![image-20180731135325278](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731135325278.png)
+![image-20180731135325278](../img/image-20180731135325278.png)
 
 ###결과 화면
 
-![image-20180731170335891](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731170335891.png)
+![image-20180731170335891](../img/image-20180731170335891.png)
 
 
 
@@ -312,7 +312,7 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 
 1. Object Pane 에서 Other > Data-Driven Content 를 선택하여 Canvas 에 Drag&Drop 합니다.
 
-![image-20180731135141878](/Users/dangtong/Dropbox/typora/DDC%20Guid/img/image-20180731135141878.png)
+![image-20180731135141878](../img/image-20180731135141878.png)
 
 
 
@@ -320,7 +320,7 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 
    http://{va-server-ip}/htmlcommons/multi.html 을 입력합니다.
 
-   ![image-20180731173556522](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731173556522.png)
+   ![image-20180731173556522](../img/image-20180731173556522.png)
 
    
 
@@ -334,5 +334,5 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 
 ### 결과 화면
 
-![image-20180731173849276](/Users/dangtong/Dropbox/typora/DDC Guid/img/image-20180731173849276.png)
+![image-20180731173849276](../img/image-20180731173849276.png)
 
