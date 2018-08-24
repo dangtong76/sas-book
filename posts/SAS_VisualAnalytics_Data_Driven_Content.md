@@ -322,8 +322,6 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 
    ![image-20180731173556522](../img/image-20180731173556522.png)
 
-   
-
 2. 오른쪽 Roles Pane 에서 **Variables** 에 아이템을 추가 합니다.
 
 > time, sensor1, sensor2, sensor3, sensor4 순서를 지켜 입력해야함
