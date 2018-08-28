@@ -196,7 +196,7 @@ rsync -av --progress /opt/install/mirror target_machine:/var/www/html/
 
 ###1-7 Ansible Playbook 생성
 
-#### A. JDK 설치
+####  JDK 설치
 
 Ansible playbook 을 생성을 위해 sas-orchestration 명령어를 사용하게 되며, 명령어 수행을 위해 jdk 인스톨이 필요합니다.
 
