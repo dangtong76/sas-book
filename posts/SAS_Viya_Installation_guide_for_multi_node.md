@@ -6,6 +6,8 @@
 
 삭제시 자동으로 인스톨 디렉토리를 '_'를 prefix 로 붙여 백업 하게 됩니다.
 
+예를 들면 /opt/sas/viya 디렉토리는 /opt/sas/viya_12311 로 변경 됩니다.
+
 ~~~{bash}
 ansible-playbook deploy-cleanup.yml
 ~~~
@@ -18,11 +20,44 @@ ansible-playbook deploy-cleanup.yml
 
 SAS Viya 설치 관련 내용은 아래와 같습니다.
 
+SAS Viya 의 설치 이미지는 Viya3.4 부터 지원되는 mirror manager를 통해 다운받아 설치 하도록 합니다.
+
 | 항목               | 내용                         |
 | ------------------ | ---------------------------- |
 | 설치 유저          | root                         |
-| 설치 파일 위치     | /opt/sas/install             |
+| 설치 파일 위치     | /opt/install                 |
 | SAS Viya 설치 위치 | /opt/sas/viya, /opt/sas/spre |
+
+레드헷 리눅스의 경우 subscription 계약이 되어 있지 않다면, centos 리포지토리를 등록해서 Viya3.4 설치에 필요한 패키들을 다운 받을 수 있습니다.
+
+vi /etc/yum.repository.d/centos.repo  
+
+```
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://ftp.daum.net/centos/7/os/$basearch/
+gpgcheck=1
+gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
+
+[updates]
+name=CentOS-$releasever - Updates 
+baseurl=http://ftp.daum.net/centos/7/updates/$basearch/
+gpgcheck=1
+gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
+
+[extras]
+name=CentOS-$releasever - Extras 
+baseurl=http://ftp.daum.net/centos/7/extras/$basearch/
+gpgcheck=1
+gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
+
+[centosplus]
+name=CentOS-$releasever - Plus 
+baseurl=http://ftp.daum.net/centos/7/centosplus/$basearch/
+gpgcheck=1
+gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
+
+```
 
 
 
@@ -42,14 +77,14 @@ chown -R sas:sas /opt
 
 ### 1-3. 설치시 필요 파일 리스트
 
-| 파일명                       | 설명                                           | 다운로드 링크                                                |
-| ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| sas-orchestration-linux.tgz  | ansible playbook build                         | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/command-line-interface.html) |
-| mirrormgr-linux.tgz          | 설치 파일 다운로드 및 yum 로컬 리포지토리 구성 | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/mirror-manager.html) |
-| SAS_Viya_deployment_data.zip | 라이센스 및 제품 목록                          | 메일첨부                                                     |
-| OpenLDAP-master.tar.gz       | 계정관리용 LDAP                                | [다운로드](https://gitlab.sas.com/canepg/OpenLDAP) (SAS 네트워크) |
+아래 파일들을 다운 받아 ftp 접속이 가능한 유저의 디렉토리에 업로드 시킵니다.
 
-
+| 파일명                       | 설명                                                     | 다운로드 링크                                                |
+| ---------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
+| sas-orchestration-linux.tgz  | ansible playbook build (1-5 참조)                        | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/command-line-interface.html) |
+| mirrormgr-linux.tgz          | 설치 파일 다운로드 및 yum 로컬 리포지토리 구성 (1-6참조) | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/mirror-manager.html) |
+| SAS_Viya_deployment_data.zip | 라이센스 및 제품 목록 (1-4 참조)                         | 메일첨부                                                     |
+| OpenLDAP-master.tar.gz       | 계정관리용 LDAP                                          | [다운로드](https://gitlab.sas.com/canepg/OpenLDAP) (SAS 네트워크) |
 
 
 
@@ -71,23 +106,139 @@ SOE (SAS Order Email) 에 첨부된 SAS_Viya_deployment_data.zip 파일을 다�
 
 
 
-### 1-6. Mirror Repo 생성(3.4 이상)
+### 1-6. Mirror Manager 다운로드 및 설정 (3.4 이상)
 
 다운로드 : [Mirror Manager 다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/command-line-interface.html)
 
-####SAS 패키지 미러 만들기
+![image-20180829021336415](../img/image-20180829021336415.png)
+
+온라인으로 다운 받으면서 설치 할 경우 시간이 매우 오래 걸리기 때문에 가급적 mirror manager 를 사용하여 다운을 받은뒤 리포지토리 구성을 해준후 설치 합니다. 미러 리포지토리는 아래 두가지 방법으로 모든 노들들에 공유 되어야 합니다.
+
+1. NFS 를 이용하여 모든 노드에 마운트
+2. 웹서버를 이용하여 모든 노드가 접근 가능 하도록 설정
+
+Viya3.4 인스톨을 위해서는 모든 노드에 웹서버가 설치 되어야 하기때문에 2번 방법을 이용 하도록 하겠습니다.
+
+
+
+#### Mirror Manager 압축풀기
+
+~~~
+gunzip mirrormgr-linux.tgz
+tar -xvf mirrormgr-linux.tar
+~~~
+
+
+
+####SAS 미러 리포지토리 만들기
+
+명령어 : mirrormgr mirror --deployment-data {path-to-SOE-file} --path {mirror-path} --platform {platform-tag} --log-file {log-file-path} --latest
 
 ```
-./mirrormgr mirror --deployment-data /home/ec2-user/SAS_Viya_deployment_data.zip --path /opt/install/mirror --platform x64-redhat-linux-6 --latest
+./mirrormgr mirror --deployment-data /home/ec2-user/SAS_Viya_deployment_data.zip --path /opt/install/mirror --platform x64-redhat-linux-6 --log-file /home/ec2-user/mirrormgr.log --latest
 ```
+
+
+
+#### Hostname 변경
+
+모든 노드의 호스트네임을 알맞게 변경합니다. 단, 주의 할 점은 FQDN(Fully Qualyfied Domain Name) 을 따라야 합니다.
+
+예를 들어, "www"가 호스트 이름이고, "mycompany.co.kr"이 도메인 이름이라면, FQDN은 "www.mycompany.co.kr"가 됩니다. 
+
+> 도메인 서버 등록과 상관없이 내부망 에서는 /etc/hosts 파일에만 등록하면 도메인에 우선 합니다. 
+
+명령어 : hostnamectl set-hostname {host-name}
+
+~~~
+hostnamectl set-hostname casc.mycompany.com  #controller node
+hostnamectl set-hostname casw1.mycompany.com #cas worker node1
+hostnamectl set-hostname casw2.mycompany.com #cas worker node2
+hostnamectl set-hostname casw3.mycompany.com #cas worker node3
+~~~
+
+
+
+#### Hostname 을 각 노드의 /etc/hosts 파일에 등록
+
+~~~
+192.168.56.101 casc.mycompany.com
+192.168.56.102 casw1.mycompany.com
+192.168.56.103 casw2.mycompany.com
+192.168.56.104 casw3.mycompany.com
+~~~
+
+> 웹서버 설치 전에 호스트 파일을 먼저 변경 하는 것은 웹서버 인증서가 호스트 파일 을 기본으로 생성 되기 때문입니다.
+>
+> 웹서버 설치후에 호스트 파일을 변경하게 되면 Viya설치시 에러가 발생 합니다. 이때는 mod_ssl 을 삭제하고 재설치 하면 새로운 호스트 파일의 이름으로 인증서를 만들게 되고 이후 새롭게 viya 를 설치 하면 됩니다.
+
+
+
+#### Web Server 설치
+
+~~~
+yum install httpd
+~~~
+
+
+
+#### Web Server 서비스 디렉토리로 리포지토리 복사
+
+아파치 웹서버를 설치하게 되면 기본 서비스 디렉토리가 /var/www/html 이 됩니다. 해당 디렉토리로 리포지토리를 복사합니다.
+
+이후 모든 서버에서 해당 디렉토리에 접근하여 설치 파일을 다운받아 자동 설치가 됩니다.
+
+~~~
+rsync -av --progress /opt/install/mirror target_machine:/var/www/html/
+~~~
+
+
+
+###1-7 Ansible Playbook 생성
+
+#### A. JDK 설치
+
+Ansible playbook 을 생성을 위해 sas-orchestration 명령어를 사용하게 되며, 명령어 수행을 위해 jdk 인스톨이 필요합니다.
+
+SAS Viya 에서는 아래 두가지 JDK 를 권장합니다.
+
+1. OpenJDK 1.8.x 이상
+2. OracleJDK 1.8.x 이상
+3. Azul zulu version 1.8.x 이상
+
+> OpenJDK7 이상 부터는 Oracle Idk 와 성능 차이가 거의 없으며 안정성 또한 많은 상용기업에서 사용하고 있기 때문에 문제가 되지 않습니다. 
+
+~~~
+yum install java-1.8.0-openjdk
+~~~
+
+
 
 #### Ansible Playbook 생성
 
+Ansible 을 통해 Viya3.4 설치를 위해 ansible-playbook 을 생성 합니다. SOE 메일에 적힌 라이센스 허가 목록에 대해서만 Ansible playbook이 자동 생성 됩니다.
+
 ```
+# 압축 풀기
+gunzip sas-orchestration.tgz
+tar -xvf sas-orchestration.tar
+
+# Ansible Play Book 생성
 ./sas-orchestration build --input ${path-to-SOE-zip-file} --repository-warehouse "file:///home/ec2-user/mirror" --platform redhat
+
+# 플레이북 압축 풀기
+tar -xvf SAS_Viya_playbook.tgz
+
+# 플레이북 파일 install 디렉토리로 이동
+cp SAS_Viya_playbook.tgz /opt/install/
+
+# 플레이북 압축 풀기
+cd /opt/sas/install
+gunzip SAS_Viya_playbook.tgz
+tar -xvf SAS_Viya_playbook.tar
 ```
 
-> Platform TAG
+> Platform TAG 정보
 >
 > oracle linux , redhat linux : **redhat**
 >
@@ -95,88 +246,44 @@ SOE (SAS Order Email) 에 첨부된 SAS_Viya_deployment_data.zip 파일을 다�
 
 
 
-### Ansible playbook 생성
-
-~~~{bash}
-# sas-orchestration.tgz 압축풀기 : sas-orchestration 실행파일 최종생성
-gunzip sas-orchestration.tgz
-tar -xvf sas-orchestration.tar
-
-# 플레이북 생성 : SAS_Viya_playbook.tgz 파일 최종 생성
-./sas-orchestration build --input SAS_Viya_deployment_data.zip
-
-# 플레이북 압축 풀기
-tar -xvf SAS_Viya_playbook.tgz
-
-# 플레이북 파일 install 디렉토리로 이동
-cp SAS_Viya_playbook.tgz /opt/sas/install/
-
-# 플레이북 압축 풀기
-cd /opt/sas/install
-gunzip SAS_Viya_playbook.tgz
-tar -xvf SAS_Viya_playbook.tar
-~~~
-
-
-
 ### 1-8. SSH 키생성 및 복사
 
-#### /etc/hosts 파일에 클러스터 노드 추가
-
-~~~
-172.31.30.9 casc.amore.com
-172.31.20.129 casw1.amore.com
-172.31.17.73 casw2.amore.com
-172.31.27.86 casw3.amore.com
-~~~
-
 #### root 유저 키생성
+
+ssh key 를 생성하게 되면 /root/.ssh 디렉토리 밑에 id_rsa(개인키), id_rsa(공개키) 가 만들어 집니다.
 
 ~~~bash
 ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 ~~~
 
-#### root 유저 키복사
+#### root 유저 키복사(로컬)
 
 ~~~bash
-ssh-copy-id {hostname-or-ip}
+cat /root/.ssh/id_rsa.pub > /root/.ssh/authorizedkeys
+
+chmod 600 /root/.ssh/* # 변경하지 않으면 이후 접속시 권한 문제가 발생 합니다.
 ~~~
 
-####sas,cas 유저에 대한 키복사
+####root 유저 키복사(원격)
 
 ~~~
-vi /etc/gridhosts
-===============================
-casc.amore.com
-casw1.amore.com
-casw2.amore.com
-casw3.amore.com
-~~~
-
-~~~
-for i in $(cat /etc/gridhosts)
-do
-	scp -r ~/.ssh $i:/home/sas;
-done
-~~~
-
-~~~
-for i in $(cat /etc/gridhosts)
-do
-	scp -r ~/.ssh $i:/home/cas;
-done
+ssh-copy-id casw1.mycompany.com
+ssh-copy-id casw2.mycompany.com
+ssh-copy-id casw3.mycompany.com
 ~~~
 
 
 
-## 2. Pre-Installation
+## 2. 요구 Package 설치 및 OS 설정 변경(튜닝)
 
-### YUM Repository 추가
+### 2-1. YUM Repository 추가
 
-#### Epel
+#### epel 리포지토리 추가
+
+Peel 리포지토리의 경우 redhat 및 기본 리포지토리에 python-pip 등의 python 관련 패키지가 포함되어 있지 않기 때문에 반듯이 추가 하여야 합니다.
 
 ~~~bash
-sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majversion.noarch.rpm
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majversion.noarch.rpm
 ~~~
 
 > $majversion 에 리눅스 버전 추가 
@@ -185,7 +292,7 @@ sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$m
 
 
 
-###확인사항
+####요구 소프트웨어 설치
 
 ````
 # 운영체제 확인
@@ -213,10 +320,7 @@ java -veriosn
 # java 설치
 yum install java-1.8.0-openjdk
 
-# 필수 요구 패키지 설치 확인
-rpm -qa at nfs-utils.x86_64 nfs-utils-lib.x86_64 gcc glibc firefox compat-libstdc++-33 compat-glibc GLIBC 2.12 libuuid libSM libXrender fontconfig libstdc++ zlib apr ksh numactl perl-Net-SSLeay libXext libXext.i686 libXp libXp.i686 libXts libXtst.i686 libgcc libgcc.i686 libpng12 libpng12.i686 python 2.7 xterm xauth libXmu uuid mod_ssl tcl
-
-# 패키지 설치 스크립트
+# Viya3.4 설치를 위한 요구 패키지 설치 스크립트 .sh 파일로 저장한후 실행 하면 자동 설치 됩니다.
 pkgs="                    \
  at                       \
  nfs-utils.x86_64         \
@@ -265,43 +369,40 @@ sudo systemctl disable firewalld.service
 sudo sestatus 
 만약 활성화 상태일 경우 모든 타겟 서버에 다음 명력을 통해 permissive mode 를 활성화 함
 
-sudo setenforce 0    => 안먹을 때도 있음 재부팅 필요
+sudo setenforce 0
 sudo sed -i.bak -e 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 
-# Ansible 인스톨을 위한 EPEL 리포지토리 추가 스크립트
-
-## Attach EPEL
-sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-
-# Display the available repositories
+# epel 이 제대로 추가 되었는지 확인
 sudo yum repolist
 ````
+
+
 
 ### Ansible 설치
 
 + Ansible 설치를 위한 패키지 설치
 
 ~~~bash
-sudo yum install -y python python-setuptools python-devel openssl-devel
-sudo yum install -y python-pip gcc wget automake libffi-devel python-six
+yum install -y python python-setuptools python-devel openssl-devel
+yum install -y python-pip gcc wget automake libffi-devel python-six
 ~~~
 
 + Epel 삭제
 
 ~~~
-sudo yum remove -y epel-release
+yum remove -y epel-release
 ~~~
 
 + PIP 업그레이드
 
 ~~~
-sudo pip install --upgrade pip setuptools
+pip install --upgrade pip setuptools
 ~~~
 
 + Ansible 설치
 
 ~~~
-sudo pip install ansible==2.4.1
+pip install ansible==2.4.1
 ~~~
 
 + 설치 확인
@@ -313,7 +414,9 @@ ansible localhost -m ping
 
 
 
-### 커널변수 설정
+### 커널변수 튜닝
+
+아래 튜닝 항목들은 운영을 위한 최소 튜닝 방법 이므로 추가적은 성능 튜닝은 [SAS Viya 튜닝 가이드](http://documentation.sas.com/api/docsets/caltuning/3.4/content/caltuning.pdf?locale=en)를 참조 바랍니다.
 
 + /etc/ssh/sshd_config 파일 수정
 
@@ -418,6 +521,8 @@ casenv_admin_user : cas
 CAS_DISK_CACHE : /opt/sas/cascache
 ~~~
 
+
+
 #### Validation 수행
 
 /opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
@@ -425,6 +530,8 @@ CAS_DISK_CACHE : /opt/sas/cascache
 ~~~bash
 ansible-playbook system-assessment.yml 
 ~~~
+
+
 
 #### Deployment 수행
 
@@ -438,47 +545,7 @@ ansible-playbook -vvv site.yml
 nohup ansible-playbook -vvv site.yml &
 ~~~
 
-> 백그라운드로 수행할 경우 deployment.log 를 확인하면 인스톨 상황을 알 수 있음
-
-
-
-
-
-
-
-###Yum Repository 등록
-
-subscription-manager 미등록시 subscription-manager 등록 혹은 centOS repository 사용 
-
-> vi /etc/yum.repository.d/centos.repo  
-
-~~~
-[base]
-name=CentOS-$releasever - Base
-baseurl=http://ftp.daum.net/centos/7/os/$basearch/
-gpgcheck=1
-gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
-
-[updates]
-name=CentOS-$releasever - Updates 
-baseurl=http://ftp.daum.net/centos/7/updates/$basearch/
-gpgcheck=1
-gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
-
-[extras]
-name=CentOS-$releasever - Extras 
-baseurl=http://ftp.daum.net/centos/7/extras/$basearch/
-gpgcheck=1
-gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
-
-[centosplus]
-name=CentOS-$releasever - Plus 
-baseurl=http://ftp.daum.net/centos/7/centosplus/$basearch/
-gpgcheck=1
-gpgkey=http://ftp.daum.net/centos/RPM-GPG-KEY-CentOS-7
-~~~
-
-
+> 백그라운드로 수행할 경우 deployment.log 및 nohup.out 을 확인하면 인스톨 상황을 알 수 있음
 
 
 
