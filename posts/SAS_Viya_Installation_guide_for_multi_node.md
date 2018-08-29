@@ -4,9 +4,9 @@
 
 ## 0. Viya 삭제
 
-삭제시 자동으로 인스톨 디렉토리를 '_'를 prefix 로 붙여 백업 하게 됩니다.
+삭제시 자동으로 인스톨 디렉토리를 '_{sequence_number}'를 postfix 로 붙여 백업 하게 됩니다.
 
-예를 들면 /opt/sas/viya 디렉토리는 /opt/sas/viya_12311 로 변경 됩니다.
+예를 들면 /opt/sas/viya 디렉토리는 /opt/sas/viya_{sequence_number} 로 변경 됩니다.
 
 ~~~{bash}
 ansible-playbook deploy-cleanup.yml
@@ -192,6 +192,14 @@ yum install httpd
 rsync -av --progress /opt/install/mirror target_machine:/var/www/html/
 ~~~
 
+또는
+
+~~~
+mv /opt/install/mirror /var/www/html/
+~~~
+
+원격일 경우 첫번째 방법, 로컬일 경우 두번째 방법을 사용 하시면 됩니다.
+
 
 
 ### 1-7 Ansible Playbook 생성
@@ -278,6 +286,26 @@ ssh-copy-id casw1.mycompany.com
 ssh-copy-id casw2.mycompany.com
 ssh-copy-id casw3.mycompany.com
 ~~~
+
+
+
+#### sshd 설정원복
+
+/etc/ssh/sshd_config 열어서  PasswordAuthentication 을 yes 로 변경(no 부준을 주석처리)
+
+```bash
+#PasswordAuthentication yes
+#PermitEmptyPasswords no
+PasswordAuthentication no
+```
+
+
+
+#### sshd 데몬 재가동
+
+```
+systemclt restart sshd
+```
 
 
 
@@ -568,3 +596,13 @@ nohup ansible-playbook -vvv site.yml &
 > 백그라운드로 수행할 경우 deployment.log 및 nohup.out 을 확인하면 인스톨 상황을 알 수 있음
 
 
+
+## 부록
+
+### 부록-1 Oracle Access
+
+### 부록-2 Hadoop Access
+
+### 부록-3 Hadoop EP 설치 및 연결
+
+###부록-3 Amazon Redshift
