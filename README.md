@@ -2,7 +2,8 @@
 
 ### SAS Viya Installation
 
-- [SAS Viya 싱글머신 인스톨 가이드](./posts/SAS_Viya_SMP_Installation_guide.md)
+- [SAS Viya 싱글머신 인스톨 가이드 SMP](./posts/SAS_Viya_SMP_Installation_guide.md)
+- [SAS Viya 멀티 클러스터 인스톨가이드 MPP](./posts/SAS_Viya_Installation_guide_for_multi_node.md)
 
 ### Jupyter Notebook
 
