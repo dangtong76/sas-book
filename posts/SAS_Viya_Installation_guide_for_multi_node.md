@@ -490,7 +490,7 @@ DefaultTimeoutStopSec=1800s
 
 ## 3.Installation
 
-###3-1 검증 및 인스톨
+### 3-1 검증 및 인스톨
 
 /opt/sas/install/sas_viya_playbook 경로에서 다음 명령어 수행
 
