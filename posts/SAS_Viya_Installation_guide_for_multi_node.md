@@ -130,7 +130,7 @@ tar -xvf mirrormgr-linux.tar
 
 
 
-####SAS 미러 리포지토리 만들기
+#### SAS 미러 리포지토리 만들기
 
 명령어 : mirrormgr mirror --deployment-data {path-to-SOE-file} --path {mirror-path} --platform {platform-tag} --log-file {log-file-path} --latest
 
