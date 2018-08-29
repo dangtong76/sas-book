@@ -541,7 +541,7 @@ CAS_DISK_CACHE : /opt/sas/cascache
 
 
 
-###3-3 Validation 수행
+### 3-3 Validation 수행
 
 /opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
 
@@ -551,7 +551,7 @@ ansible-playbook system-assessment.yml
 
 
 
-###3-4 Deployment 수행
+### 3-4 Deployment 수행
 
 /opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
 
