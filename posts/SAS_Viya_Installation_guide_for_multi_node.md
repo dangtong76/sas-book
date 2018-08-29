@@ -194,7 +194,7 @@ rsync -av --progress /opt/install/mirror target_machine:/var/www/html/
 
 
 
-###1-7 Ansible Playbook 생성
+### 1-7 Ansible Playbook 생성
 
 ####  JDK 설치
 
