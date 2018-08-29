@@ -266,7 +266,9 @@ PasswordAuthentication yes
 systemclt restart sshd
 ~~~
 
-####root 유저 키복사
+
+
+#### root 유저 키복사
 
 터미널창 4개를 열어서 동시전송으로 차례대로 4개를 입력합니다. 패스워드를 물어보면 입력합니다.
 
@@ -297,7 +299,7 @@ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarc
 
 
 
-###2-2 요구 소프트웨어 설치
+### 2-2 요구 소프트웨어 설치
 
 ````
 # 운영체제 확인
