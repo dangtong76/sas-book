@@ -224,10 +224,7 @@ gunzip sas-orchestration.tgz
 tar -xvf sas-orchestration.tar
 
 # Ansible Play Book 생성
-./sas-orchestration build --input ${path-to-SOE-zip-file} --repository-warehouse "file:///home/ec2-user/mirror" --platform redhat
-
-# 플레이북 압축 풀기
-tar -xvf SAS_Viya_playbook.tgz
+./sas-orchestration build --input /home/ec2-user/SAS_Viya_deployment_data.zip --repository-warehouse "http://casc.mycompany.com/mirror" --platform redhat
 
 # 플레이북 파일 install 디렉토리로 이동
 cp SAS_Viya_playbook.tgz /opt/install/
@@ -238,11 +235,8 @@ gunzip SAS_Viya_playbook.tgz
 tar -xvf SAS_Viya_playbook.tar
 ```
 
-> Platform TAG 정보
+> Platform TAG 정보는 oracle linux , redhat linux 의 경우 **redhat**, 수세리눅스의 경우 **suse**
 >
-> oracle linux , redhat linux : **redhat**
->
-> suse linux : **suse**
 
 
 
@@ -256,17 +250,28 @@ ssh key 를 생성하게 되면 /root/.ssh 디렉토리 밑에 id_rsa(개인키)
 ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 ~~~
 
-#### root 유저 키복사(로컬)
+#### ssh 키복제를 위한 sshd 데몬 설정 및 재가동
+
+/etc/ssh/sshd_config 열어서  PasswordAuthentication 을 yes 로 변경(no 부준을 주석처리)
 
 ~~~bash
-cat /root/.ssh/id_rsa.pub > /root/.ssh/authorizedkeys
-
-chmod 600 /root/.ssh/* # 변경하지 않으면 이후 접속시 권한 문제가 발생 합니다.
+PasswordAuthentication yes
+#PermitEmptyPasswords no
+#PasswordAuthentication no
 ~~~
 
-####root 유저 키복사(원격)
+#### sshd 데몬 재가동
 
 ~~~
+systemclt restart sshd
+~~~
+
+####root 유저 키복사
+
+터미널창 4개를 열어서 동시전송으로 차례대로 4개를 입력합니다. 패스워드를 물어보면 입력합니다.
+
+~~~
+ssh-copy-id casc.mycompany.com
 ssh-copy-id casw1.mycompany.com
 ssh-copy-id casw2.mycompany.com
 ssh-copy-id casw3.mycompany.com
@@ -276,14 +281,14 @@ ssh-copy-id casw3.mycompany.com
 
 ## 2. 요구 Package 설치 및 OS 설정 변경(튜닝)
 
-### 2-1. YUM Repository 추가
-
-#### epel 리포지토리 추가
+### 2-1. epel YUM Repository 추가
 
 Peel 리포지토리의 경우 redhat 및 기본 리포지토리에 python-pip 등의 python 관련 패키지가 포함되어 있지 않기 때문에 반듯이 추가 하여야 합니다.
 
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${majversion}.noarch.rpm
+
 ~~~bash
-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majversion.noarch.rpm
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ~~~
 
 > $majversion 에 리눅스 버전 추가 
@@ -292,7 +297,7 @@ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majver
 
 
 
-####요구 소프트웨어 설치
+###2-2 요구 소프트웨어 설치
 
 ````
 # 운영체제 확인
@@ -313,12 +318,6 @@ service httpd status
 
 # 필요시 HTTPD 설치
 yum install httpd
-
-# java 확인
-java -veriosn
-
-# java 설치
-yum install java-1.8.0-openjdk
 
 # Viya3.4 설치를 위한 요구 패키지 설치 스크립트 .sh 파일로 저장한후 실행 하면 자동 설치 됩니다.
 pkgs="                    \
@@ -359,26 +358,31 @@ pkgs="                    \
  mod_ssl                  \
  tcl                      \
 "
-yum install --nogpgkey $pkgs -y
+yum install  $pkgs -y
 
 # 방화벽 중단
 service firewalld stop
-sudo systemctl disable firewalld.service
+systemctl disable firewalld.service
 
 # Selinux 중단
-sudo sestatus 
-만약 활성화 상태일 경우 모든 타겟 서버에 다음 명력을 통해 permissive mode 를 활성화 함
+sestatus 
+#만약 활성화 상태일 경우 모든 타겟 서버에 다음 명력을 통해 permissive mode 를 활성화 함
 
-sudo setenforce 0
-sudo sed -i.bak -e 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+setenforce 0
+sed -i.bak -e 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 
 # epel 이 제대로 추가 되었는지 확인
 sudo yum repolist
+
+# root 계정으로 /opt 하위에 sas/cascache 디렉토리 생성. 
+# cascache 디렉토리에 chmod 777 cascache 명령어를 통해 권한 부여 
+mkdir -p /opt/sas/cascache
+chmod 777 /opt/sas/cascache
 ````
 
 
 
-### Ansible 설치
+### 2-3 Ansible 설치
 
 + Ansible 설치를 위한 패키지 설치
 
@@ -395,9 +399,19 @@ yum remove -y epel-release
 
 + PIP 업그레이드
 
+redhat linux 6.x 대
+
+~~~
+pip install --upgrade pip==9.0.3
+~~~
+
+redhat linux 7.x 대
+
 ~~~
 pip install --upgrade pip setuptools
 ~~~
+
+
 
 + Ansible 설치
 
@@ -414,7 +428,7 @@ ansible localhost -m ping
 
 
 
-### 커널변수 튜닝
+### 2-4 커널변수 튜닝
 
 아래 튜닝 항목들은 운영을 위한 최소 튜닝 방법 이므로 추가적은 성능 튜닝은 [SAS Viya 튜닝 가이드](http://documentation.sas.com/api/docsets/caltuning/3.4/content/caltuning.pdf?locale=en)를 참조 바랍니다.
 
@@ -472,36 +486,40 @@ DefaultTimeoutStopSec=1800s
 
 
 
-##3. Installation
+## 3.Installation
+
+###3-1 검증 및 인스톨
 
 /opt/sas/install/sas_viya_playbook 경로에서 다음 명령어 수행
 
 ~~~
-cp sample-inventories/inventory_local.ini ./inventory.ini
+cp samples/inventory_cas_multi_machine.ini inventory.ini
 ~~~
 
- vi /sas/install/sas_viya_playbook/inventory.ini  수행하여 ansible_connection 확인.  ansible을 local로 사용시 default 설정 유지. remote 사용시 ansible_connection을   ansible_host로 변경 후 target host name으로 값 변경 
+ inventory.ini 를 아래와 같이 편집합니다.
 
 ~~~
- vi /sas/install/sas_viya_playbook/inventory.ini 
- 
- [host-definitions]
- deployTarget ansible_connection=local
+[host-definitions]
+deployTarget ansible_connection=local internal_deployment_ipv4_override=192.168.56.101 self_deployment_ipv4_override=192.168.56.101 consul_bind_adapter=eth0
+
+casw1 ansible_host=casw1.mycompany.com ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa self_deployment_ipv4_override=192.168.56.102 internal_deployment_ipv4_override=192.168.56.102 consul_bind_adapter=eth0
+
+casw2 ansible_host=casw2.mycompany.com ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa self_deployment_ipv4_override=192.168.56.103 internal_deployment_ipv4_override=192.168.56.103 consul_bind_adapter=eth0
+
+casw3 ansible_host=casw3.mycompany.com ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa self_deployment_ipv4_override=192.168.56.104 internal_deployment_ipv4_override=192.168.56.104 consul_bind_adapter=eth0
+
+[sas-casserver-primary]
+deployTarget
+
+[sas-casserver-worker]
+casw1
+casw2
+casw3
 ~~~
 
-####cascache 생성 
-
-~~~bash
-# root 계정으로 /opt 하위에 sas/cascache 디렉토리 생성. 
-# cascache 디렉토리에 chmod 777 cascache 명령어를 통해 권한 부여 
-
-mkdir -p /opt/sas/cascache
-chmod 777 /opt/sas/cascache
-~~~
 
 
-
-#### vars.yml  수정
+### 3-2 vars.yml  수정
 
 ~~~BASH
 # vi /opt/sas/install/sas_viya_playbook/vars.yml 를 입력하여 파일을 연 후 적절한 DEPLOYMENT_LABEL 을 설정
@@ -523,7 +541,7 @@ CAS_DISK_CACHE : /opt/sas/cascache
 
 
 
-#### Validation 수행
+###3-3 Validation 수행
 
 /opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
 
@@ -533,7 +551,7 @@ ansible-playbook system-assessment.yml
 
 
 
-#### Deployment 수행
+###3-4 Deployment 수행
 
 /opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
 
@@ -547,15 +565,4 @@ nohup ansible-playbook -vvv site.yml &
 
 > 백그라운드로 수행할 경우 deployment.log 및 nohup.out 을 확인하면 인스톨 상황을 알 수 있음
 
-
-
-~~~
-rpm -qa at nfs-utils.x86_64 nfs-utils-lib.x86_64 gcc glibc firefox compat-libstdc++-33 compat-glibc GLIBC 2.12 libuuid libSM libXrender fontconfig libstdc++ zlib apr ksh numactl perl-Net-SSLeay libXext libXext.i686 libXp libXp.i686 libXts libXtst.i686 libgcc libgcc.i686 libpng12 libpng12.i686 python 2.7 xterm xauth libXmu uuid mod_ssl tcl
-
-~~~
-
-~~~
-service firewalld stop
-systemctl disable firewalld.service
-~~~
 
