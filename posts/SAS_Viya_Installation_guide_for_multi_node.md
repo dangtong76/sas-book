@@ -138,19 +138,26 @@ tar -xvf mirrormgr-linux.tar
 ./mirrormgr mirror --deployment-data /home/ec2-user/SAS_Viya_deployment_data.zip --path /opt/install/mirror --platform x64-redhat-linux-6 --log-file /home/ec2-user/mirrormgr.log --latest
 ```
 
+다운받은 미러 리포지토리는 웹서버나 NFS를 이용해서 모든 노드에서 리포지토리로 인식 가능 합니다.
 
+하지만 추가적인 웹서버가 없거나 NFS 와 같은 공유 파일 시스템이 없을경우 해당 디렉토리를 tar 로 묶어 모든 노드의 동일한 디렉토리에 구성합니다. 본 가이드에서는 모든 서버의 /opt/install/mirror 디렉토리에 리포지토리를 구성하였습니다.
+
+~~~
+cd /opt/install
+tar -cvf mirror.tar ./mirror
+~~~
+
+tar 로 압축한 파일을 scp, rsync ftp 등을 이용해서 다른 노드의 동일한 디렉토리에 전송하고 압축을 풉니다.
 
 #### Hostname 변경
 
-모든 노드의 호스트네임을 알맞게 변경합니다. 단, 주의 할 점은 FQDN(Fully Qualyfied Domain Name) 을 따라야 합니다.
-
-예를 들어, "www"가 호스트 이름이고, "mycompany.co.kr"이 도메인 이름이라면, FQDN은 "www.mycompany.co.kr"가 됩니다. 
+FQDN을 따르지 않는 모든 노드의 호스트네임을 변경합니다. 예를 들어, "www"가 호스트 이름이고, "mycompany.co.kr"이 도메인 이름이라면, FQDN은 "mycompany.co.kr"가 됩니다. 
 
 > 도메인 서버 등록과 상관없이 내부망 에서는 /etc/hosts 파일에만 등록하면 도메인에 우선 합니다. 
 
 명령어 : hostnamectl set-hostname {host-name}
 
-~~~
+~~~bash
 hostnamectl set-hostname casc.mycompany.com  #controller node
 hostnamectl set-hostname casw1.mycompany.com #cas worker node1
 hostnamectl set-hostname casw2.mycompany.com #cas worker node2
@@ -174,34 +181,6 @@ hostnamectl set-hostname casw3.mycompany.com #cas worker node3
 
 
 
-#### Web Server 설치
-
-~~~
-yum install httpd
-~~~
-
-
-
-#### Web Server 서비스 디렉토리로 리포지토리 복사
-
-아파치 웹서버를 설치하게 되면 기본 서비스 디렉토리가 /var/www/html 이 됩니다. 해당 디렉토리로 리포지토리를 복사합니다.
-
-이후 모든 서버에서 해당 디렉토리에 접근하여 설치 파일을 다운받아 자동 설치가 됩니다.
-
-~~~
-rsync -av --progress /opt/install/mirror target_machine:/var/www/html/
-~~~
-
-또는
-
-~~~
-mv /opt/install/mirror /var/www/html/
-~~~
-
-원격일 경우 첫번째 방법, 로컬일 경우 두번째 방법을 사용 하시면 됩니다.
-
-
-
 ### 1-7 Ansible Playbook 생성
 
 ####  JDK 설치
@@ -216,7 +195,7 @@ SAS Viya 에서는 아래 두가지 JDK 를 권장합니다.
 
 > OpenJDK7 이상 부터는 Oracle Idk 와 성능 차이가 거의 없으며 안정성 또한 많은 상용기업에서 사용하고 있기 때문에 문제가 되지 않습니다. 
 
-~~~
+~~~bash
 yum install java-1.8.0-openjdk
 ~~~
 
@@ -232,15 +211,14 @@ gunzip sas-orchestration.tgz
 tar -xvf sas-orchestration.tar
 
 # Ansible Play Book 생성
-./sas-orchestration build --input /home/ec2-user/SAS_Viya_deployment_data.zip --repository-warehouse "http://casc.mycompany.com/mirror" --platform redhat
+./sas-orchestration build --input /home/ec2-user/SAS_Viya_deployment_data.zip --repository-warehouse "file:///opt/install/mirror" --platform redhat
 
 # 플레이북 파일 install 디렉토리로 이동
 cp SAS_Viya_playbook.tgz /opt/install/
 
 # 플레이북 압축 풀기
-cd /opt/sas/install
-gunzip SAS_Viya_playbook.tgz
-tar -xvf SAS_Viya_playbook.tar
+cd /opt/install
+tar -xvf SAS_Viya_playbook.tgz
 ```
 
 > Platform TAG 정보는 oracle linux , redhat linux 의 경우 **redhat**, 수세리눅스의 경우 **suse**
@@ -446,7 +424,7 @@ pip install --upgrade pip setuptools
 + Ansible 설치
 
 ~~~
-pip install ansible==2.4.1
+pip install ansible==2.5.3
 ~~~
 
 + 설치 확인
@@ -499,6 +477,8 @@ kernel.sem = 512 32000 256 1024
 net.core.somaxconn = 2048
 net.ipv4.ip_local_port_range = 9000 65500
 net.core.rmem_default = 262144
+vm.max_map_count=262144
+vm.overcommit_memory=0
 ~~~
 
 + 설정 변경 확인
@@ -514,19 +494,31 @@ DefaultTimeoutStartSec=1800s
 DefaultTimeoutStopSec=1800s
 ~~~
 
+### 2-5 hostname 확인
+
+아래 호스트네임 명령 3가지 를 수행해서 나온 결과가 모두 같아야 합니다.
+
+~~~
+hostname
+hostname -f
+hostname -s
+~~~
+
 
 
 ## 3.Installation
 
 ### 3-1 검증 및 인스톨
 
-/opt/sas/install/sas_viya_playbook 경로에서 다음 명령어 수행
+/opt/install/sas_viya_playbook 경로에서 다음 명령어 수행
 
 ~~~
 cp samples/inventory_cas_multi_machine.ini inventory.ini
 ~~~
 
  inventory.ini 를 아래와 같이 편집합니다.
+
+> 하나의 노드(장비) 에 대해 서로 다른 Alias 명을 사용하지 마십시요. 아래와 같이 모든 노드들이 서로다른 Alias 명을 가지고 있습니다. 
 
 ~~~
 [host-definitions]
@@ -596,6 +588,134 @@ nohup ansible-playbook -vvv site.yml &
 > 백그라운드로 수행할 경우 deployment.log 및 nohup.out 을 확인하면 인스톨 상황을 알 수 있음
 
 
+
+### 3-5 설치 모니터링 스크립트
+
+~~~bash
+while [ 1 ]
+do 
+	cat deployment.log | grep '"failed": true' 
+	sleep 2
+	clear
+done
+~~~
+
+~~~bash
+while [ 1 ]
+do
+cat yum.log | grep sas- | grep Installed | wc -l
+sleep 2
+done
+# yum 로그를 통해 진행 정도를 알 수 있습니다. 
+# Full 버전 설치시 : 640여개
+# VA 설치시
+# VA + VS 설치시
+# VA + VS + VDMML 설치시
+~~~
+
+
+
+## 4. OpenLdap 설치 및 연동
+
+
+
+## 5. Viya 서비스 기동시 순서
+
+Viya 시스템에 대한 시작 및 중지 시에는 아래 내용을 기준으로 수행 합니다.
+
+### 5-1. SAS Configuration Server 및 Agent Start
+
+프라이머리 노드에서 먼저 수행하고 나머지 노드 들에 대해 수행합니다.
+
+~~~bash
+# Redhat Linux 6
+service start sas-viya-consul-default start
+~~~
+
+~~~bash
+# Redhat Linux 7
+systemctl start sas-viya-consul-default start 
+~~~
+
+
+
+### 5-2. Vault(Secret Manager) 서비스 Start
+
+해당 서비스가 존재하는 노드에 대해 수행합니다. (일반적으로 Primary node)
+
+~~~bash
+# Redhat Linux 6
+service start sas-viya-vault-default
+~~~
+
+~~~bash
+# Redhat Linux 7
+systemctl start sas-viya-vault-default
+~~~
+
+
+
+### 5-3. Message Broker 서비스 Start
+
+해당 서비스가 존재하는 노드에 대해 수행합니다. (일반적으로 Primary node)
+
+~~~bash
+# Redhat Linux 6
+service start sas-viya-rabbitmq-server-default
+~~~
+
+~~~bash
+# Redhat Linux 7
+systemctl start sas-viya-rabbitmq-server-default
+~~~
+
+
+
+### 5-4. Data Server Service Start
+
+~~~bash
+# Redhat Linux 6
+service start sas-viya-sasdatasvrc-postgres
+~~~
+
+~~~{bash}
+# Redhat Linux 7
+systemctl start sas-viya-sasdatasvrc-postgres
+~~~
+
+
+
+### 5-5. Httpd 서비스 Start
+
+~~~{bash}
+# Redhat Linux 6
+service start httpd
+~~~
+
+~~~{bash}
+# Redhat Linux 7
+systemctl start httpd
+~~~
+
+
+
+### 5-6. 기타 서비스 모두 Start
+
+~~~bash
+# Redhat Linux 6
+service start sas-viya-all-services
+~~~
+
+~~~{bash}
+# Redhat Linux 7
+systemctl start sas-viya-all-service
+~~~
+
+
+
+
+
+###  
 
 ## 부록
 
