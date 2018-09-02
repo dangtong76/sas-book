@@ -698,13 +698,13 @@ grep sasboot ./{latest-saslogon-log-file}
 
 아래와 같이 로그인 URL이 출력됩니다.
 
-![image-20180902174624395](/Users/dangtong/Dropbox/dangtong-book/sas_book/img/image-20180902174624395.png)
+![image-20180902174624395](../img/image-20180902174624395.png)
 
 https://{hostname-or-ip}/SASLogon/reset_password?code={code} 로 접속하여 sasboot 계정의 패스워드를 설정하고 접속 합니다.
 
 환경관리 > 구성 으로 이동하여 '뷰' 필터에서 '기본서비스' > 'identies service' 를 선택하면 아래와 같은 화면이 보입니다.
 
-![image-20180902175052331](/Users/dangtong/Dropbox/dangtong-book/sas_book/img/image-20180902175052331.png)
+![image-20180902175052331](../img/image-20180902175052331.png)
 
 각각 connection, group, user 항목을 클릭하여 아래 **sitedefault.yml** 을 확인하여 수정 합니다.
 
