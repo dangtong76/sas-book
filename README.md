@@ -14,6 +14,7 @@
 ### REST API
 
 + [ASTORE 호출을 위한 Micro Analytic Service(MAS) 설정 가이드](./posts/MicroAnalyticService_Configuration_for_Astore.md)
++ [REST API 사용시 어플리케이션 인증 및 토큰 조회](./posts/REST_API_Authentication.md)
 
 ### Visual Analytics
 
