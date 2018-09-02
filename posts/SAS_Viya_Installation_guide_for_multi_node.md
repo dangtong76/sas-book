@@ -631,6 +631,14 @@ cd OpenLDAP-master
 
 inventory.ini 를 열어 수정 합니다. apple 이라고 되어 있는 부분을 openldap 서버의 호스트명으로 변경합니다.
 
+`shift` + `:` 를 눌러 아래와 같이 일괄 변경 합니다.
+
+~~~
+%s/apple/{host-name}/g
+~~~
+
+
+
 ### 4-2 inventory.ini 수정
 
 Inventory.in 파일에서  아래 부분을 변경 합니다.
