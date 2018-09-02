@@ -547,10 +547,6 @@ casw3
 # vi /opt/sas/install/sas_viya_playbook/vars.yml 를 입력하여 파일을 연 후 적절한 DEPLOYMENT_LABEL 을 설정
 DEPLOYMENT_LABEL : "{{ DEPLOYMENT_ID}}"
 
-# sas_install_type 설정. default 설정은 all 이며 모든 소프트웨어를 설치. 
-# programming 옵션 설정 시 CAS, SAS Foundation, SAS Studio를 포함한 programming interface만 설치
-sas_install_type : all
-
 # casenv_group 값을 cas가 속해 있는 그룹의 이름으로 설정
 casenv_group : sas
 
@@ -617,9 +613,17 @@ done
 
 ## 4. OpenLdap 설치 및 연동
 
+### 4-1. 
+
+Gitlab.sas.com 에서 다운받은 OpenLDAP 설치 파일이 있는 디렉토리로 이동합니다.
+
+~~~
+
+~~~
 
 
-## 5. Viya 서비스 기동시 순서
+
+## 5. Viya 서비스 기동 시 순서
 
 Viya 시스템에 대한 시작 및 중지 시에는 아래 내용을 기준으로 수행 합니다.
 
