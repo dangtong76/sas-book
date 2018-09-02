@@ -20,7 +20,7 @@ DDC 기능을 구현하는데 있는 크게 2가지 방법이 있습니다.
 
 ## RADAR 차트
 
-###DATA Set 업로드
+### DATA Set 업로드
 
 다운로드(Dropbox) : [다운로드 클릭](https://www.dropbox.com/s/0kbfznvkq4uxxh4/star_data.csv?dl=1)
 
