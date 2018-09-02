@@ -1,7 +1,5 @@
 # SAS Visual Analytics Data Driven Contents(DDC) Guide
 
-[TOC]
-
 
 
 ## 차트 구성 방법
@@ -20,7 +18,7 @@ DDC 기능을 구현하는데 있는 크게 2가지 방법이 있습니다.
 
 본 가이드 에서는 **Chart.js** 의 RADAR 차트와 **Plot.ly** 의 multy Y 축 차트를 만드는 예제로 구성되어 있습니다.
 
-##RADAR 차트
+## RADAR 차트
 
 ###DATA Set 업로드
 
@@ -138,7 +136,7 @@ radar.html
 
 
 
-###신규 리포트에 DDC 컴포넌트 추가 및 설정
+### 신규 리포트에 DDC 컴포넌트 추가 및 설정
 
 1. Object Pane 에서 Other > Data-Driven Content 를 선택하여 Canvas 에 Drag&Drop 합니다.
 
@@ -164,7 +162,7 @@ radar.html
 
 
 
-##멀티 Y-축트차트
+## 멀티 Y-축트차트
 
 ### DATA Set 업로드
 
