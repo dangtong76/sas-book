@@ -306,7 +306,9 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 </HTML>
 ~~~
 
-###신규 리포트에 DDC 컴포넌트 추가 및 설정
+
+
+### 신규 리포트에 DDC 컴포넌트 추가 및 설정
 
 1. Object Pane 에서 Other > Data-Driven Content 를 선택하여 Canvas 에 Drag&Drop 합니다.
 
@@ -325,8 +327,6 @@ csv 파일을 다운로드 하여 CAS 테이블 생성
 > time, sensor1, sensor2, sensor3, sensor4 순서를 지켜 입력해야함
 
 ![image-20180731173739011](/var/folders/n3/hggcwspn72xdj5dyzyy33dlh0000gn/T/abnerworks.Typora/image-20180731173739011.png)
-
-
 
 ### 결과 화면
 
