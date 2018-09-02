@@ -70,7 +70,7 @@ curl -X POST "https://server.example.com/SASLogon/oauth/token" \
 
 
 
-### 3. API 에서 Access 토큰 사용하기
+### 3. 클라이언트 에서 Access 토큰 사용하기
 
 아래와 같이 Access 토큰을 이용해 SAS Viya 서버에 요청을 보내 봅니다.
 
