@@ -729,4 +729,4 @@ systemctl start sas-viya-all-service
 
 ### 부록-3 Hadoop EP 설치 및 연결
 
-###부록-3 Amazon Redshift
+### 부록-3 Amazon Redshift
