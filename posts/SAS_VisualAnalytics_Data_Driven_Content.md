@@ -26,7 +26,7 @@ DDC 기능을 구현하는데 있는 크게 2가지 방법이 있습니다.
 
 csv 파일을 다운로드 하여 CAS 테이블 생성
 
-###VA 서버에 radar.html 업로드 하기
+### VA 서버에 radar.html 업로드 하기
 
 SAS VA 서버의 **/opt/sas/viya/home/var/www/html/htmlcommons**/ 디렉토에에 업로드
 
