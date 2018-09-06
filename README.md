@@ -4,6 +4,7 @@
 
 - [SAS Viya 싱글머신 인스톨 가이드 SMP](./posts/SAS_Viya_SMP_Installation_guide.md)
 - [SAS Viya 멀티 클러스터 인스톨가이드 MPP](./posts/SAS_Viya_Installation_guide_for_multi_node.md)
+- [SAS Viya 오프라인 인스톨용 리포지 토리 작성](./posts/viya_offline_install.md)
 
 ### Jupyter Notebook
 
