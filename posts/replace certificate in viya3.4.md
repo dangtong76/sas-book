@@ -84,3 +84,28 @@ systemctl start sas-viya-all-services start
 
 
 
+### 기타 확인 명령어
+
+#### 인증서 확인
+
+~~~bash
+openssl x509 -in server.crt -text -noout
+~~~
+
+#### 키 검증 하기
+
+~~~{bash}
+openssl rsa -in server.key -check
+~~~
+
+#### 인증서 와 키 매칭 확인
+
+인증서와 키에 대해 아래 명령을 수행한 결과인 md5 해쉬 결과가 같으면 OK
+
+~~~{bash}
+openssl x509 -noout -modulus -in server.crt| openssl md5
+openssl rsa -noout -modulus -in server.key| openssl md5
+~~~
+
+
+
