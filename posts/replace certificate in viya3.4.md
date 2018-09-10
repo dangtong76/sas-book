@@ -1,12 +1,14 @@
 ## SAS Viya3.4 인증서 교체 가이드
 
+[TOC]
+
 ### 인증서 다운로드
 
 교체할 새로운 인증서는 Base64 PEM 인코딩 되어 있어야 합니다.
 
 ### 인증서 복사 및 권한 설정
 
-인즌서 복사
+인증서 복사
 
 ~~~bash
 cp customer.crt /etc/pki/tls/certs/customer.crt
