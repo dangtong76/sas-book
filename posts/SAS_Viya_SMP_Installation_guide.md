@@ -60,6 +60,31 @@ SOE (SAS Order Email) 에 첨부된 SAS_Viya_deployment.zip 파일을 다운받�
 
 
 
+### hostname 설정
+
+호스트네임을 설정하되 FQDN 으로 설정합니다. 예를 들면 viya.sas.com 이 FQDN 이 되고 viya 는 short hostname 이 됩니다.
+
+~~~{bash}
+hostnamectl set-hostname viya
+hostnamectl set-hostname viya.sas.com --static
+~~~
+
+/etc/hosts 파일을 열어 아래와 같이 입력 합니다.
+
+~~~{bash}
+192.168.56.101 viya.sas.com viya
+~~~
+
+아래 명령어를 통해 호스트네임을 검증합니다.
+
+~~~{bash}
+hostname -f # FQDN 출력
+hostname -s # shot hostname 출력
+hostname # FQEN 출력
+~~~
+
+
+
 ### Ansible playbook 생성
 
 ~~~{bash}
@@ -134,7 +159,7 @@ tar -xvf SAS_Viya_playbook.tar
   #!/bin/bash
   sed -i -e 's/^\s*yum groupinstall/#yum groupinstall/' setup_repos.sh
   ./setup_repos.sh
-  MIRRORLOC=/sas/install/mirror
+  MIRRORLOC=/opt/install/mirror
   if [ ! -d ${MIRRORLOC} ]; then
   mkdir -p ${MIRRORLOC}
   fi
@@ -154,13 +179,13 @@ tar -xvf SAS_Viya_playbook.tar
 + createrepo.sh 실행
 
   ~~~
-  /sas/install/sas_viya_playbook/createrepo.sh
+  /opt/install/sas_viya_playbook/createrepo.sh
   ~~~
 
 + yml 카피
 
   ~~~bash
-  cp /sas/install/sas_viya_playbook/internal/soe_defaults.yml /sas/install/sas_viya_playbook/soe_defaults.yml
+  cp /opt/install/sas_viya_playbook/internal/soe_defaults.yml /opt/install/sas_viya_playbook/soe_defaults.yml
   ~~~
 
 + createrepo 설치
@@ -169,14 +194,12 @@ tar -xvf SAS_Viya_playbook.tar
   yum install createrepo
   ~~~
 
-  
-
 + yumrepocreation.sh 생성
 
   ~~~bash
   #!/bin/bash
   #sudo yum install yum-utils createrepo httpd
-  REPOLOC=/sas/install/mirror
+  REPOLOC=/opt/install/mirror
   ORDERABLE=$(grep METAREPO_SOE_ORDERABLE soe_defaults.yml | awk -F"'" '{ print $2 }')
   # Make the directory that will house the yum repository
   if [ ! -d ${REPOLOC} ]; then
@@ -184,7 +207,6 @@ tar -xvf SAS_Viya_playbook.tar
   fi
   echo ""
   echo "Unpack the files from repomirror.tar.gz"
-  #tar xf repomirror.tar.gz -C ${REPOLOC}
   echo ""
   echo "Create the repository"
   for repo in ${ORDERABLE}; do
@@ -214,7 +236,7 @@ tar -xvf SAS_Viya_playbook.tar
 #### Epel
 
 ~~~bash
-sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$majversion.noarch.rpm
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ~~~
 
 > $majversion 에 리눅스 버전 추가 
@@ -343,7 +365,7 @@ sudo pip install --upgrade pip setuptools
 + Ansible 설치
 
 ~~~
-sudo pip install ansible==2.4.1
+sudo pip install ansible==2.3.2
 ~~~
 
 + 설치 확인
