@@ -2,6 +2,8 @@
 
 [TOC]
 
+온라인 문서 위치 : [github](https://github.com/dangtong76/sas-book/blob/master/posts/SAS_Viya_upgrade_guide.md)
+
 ### 1. 접속정보 및  디렉토리 구조 
 
 #### 접속정보
