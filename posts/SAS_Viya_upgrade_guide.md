@@ -1,4 +1,4 @@
-##GUIDE for SAS viya upgrade to 3.4
+## GUIDE for SAS viya upgrade to 3.4
 
 [TOC]
 
