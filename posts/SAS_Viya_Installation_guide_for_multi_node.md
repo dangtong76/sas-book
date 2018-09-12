@@ -434,7 +434,7 @@ pip install --upgrade pip setuptools
 + Ansible 설치
 
 ~~~
-pip install ansible==2.5.3
+pip install ansible==2.3.1
 ~~~
 
 + 설치 확인

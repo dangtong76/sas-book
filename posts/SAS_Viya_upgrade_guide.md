@@ -1,18 +1,43 @@
-##SAS viya 3.3 to 3.4 upgrade Guide
+##GUIDE for SAS viya upgrade to 3.4
 
 [TOC]
 
-### 1. 디렉토리 구조
+### 1. 접속정보 및  디렉토리 구조 
 
-| 디렉토리            | 설명                       |
-| ------------------- | -------------------------- |
-| /opt/install        | 3.3 인스톨 수행 디렉토리   |
-| /opt/upgrade        | 3.4 인스톨 수행 디렉토리   |
-| /opt/upgrade/mirror | 3.4 인스톨 미러 리포지토리 |
+#### 접속정보
+
+ssh 접속을 위한 key 파일 : [다운로드](https://www.dropbox.com/s/293y8n3oonfma4c/sas-viya-key.pem?dl=1)
+
+| hostname          | public-ip    | private-ip    | OS Account | Viya account |
+| ----------------- | ------------ | ------------- | ---------- | ------------ |
+| samsung01.sas.com | 52.79.135.22 | 172.31.28.123 | ec2-user   | sasboot      |
+| samsung02.sas.com | 54.180.37.53 | 172.31.5.204  | ec2-user   | sasboot      |
+
+#### 디렉토리 구조
+
+| 디렉토리            | 설명                                   |
+| ------------------- | -------------------------------------- |
+| /opt/install        | 3.3 인스톨 수행 디렉토리               |
+| /opt/upgrade        | 3.4 인스톨 수행 디렉토리               |
+| /opt/upgrade/mirror | 3.4 인스톨 미러 리포지토리 (필수 아님) |
+| /opt/install/mirror | 3.3 인스톨 미러 리포지토리 (필수 아님) |
+
+> 미러 리포지토리가 필수는 아니지만, 본 가이드에서는 미러 리포지토리가 있느다는 가정하에 진행 합니다.
 
 
 
 ### 2. 업그레이드에 필요한 유틸리티
+
+#### 디렉토리 생성
+
+```{bash}
+mkdir /opt/upgrade # 업그레이드 소프트웨어 인스톨 디렉토리
+mkdir /home/ec2-user/upgrade # 업그레이드용 파일 보관
+```
+
+
+
+#### 파일 다운로드 및 업로드
 
 | 파일명                       | 설명                                                     | 다운로드 링크                                                |
 | ---------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
@@ -21,11 +46,16 @@
 | SAS_Viya_deployment_data.zip | 라이센스 및 제품 목록 (1-4 참조)                         | 메일첨부                                                     |
 | OpenLDAP-master.tar.gz       | 계정관리용 LDAP                                          | [다운로드](https://gitlab.sas.com/canepg/OpenLDAP) (SAS 네트워크) |
 
+> 다운로드 받은 파일을 서버의 /home/ec2-user/upgrade 에 업로드 합니다.
+
+
+
 #### Mirror Manager 압축풀기
 
+먼저 mirror manager 의 압축을 풉니다.
+
 ```
-gunzip mirrormgr-linux.tgz
-tar -xvf mirrormgr-linux.tar
+tar -xvf mirrormgr-linux.tgz
 ```
 
 
@@ -64,7 +94,7 @@ tar -xvf SAS_Viya_playbook.tgz
 
 
 
-### vars.yml 파일 복사
+### 3. 설정 파일 비교 및 구성
 
 #### 수정되지 않은 3.3 vars.yml 파일 복사
 
@@ -78,12 +108,14 @@ cp /opt/install/sas_viya_playbook/samples/vars.yml /opt/upgrade/sas_viya_playboo
 cp /opt/install/sas_viya_playbook/vars.yml /opt/upgrade/sas_viya_playbook/vars_current.yml
 ~~~
 
-#### 파일비교
+#### vars.yml 파일비교 및 구성
 
 ~~~{bash}
 cd /opt/upgrade/sas_viya_playbook
 diff vars_current.yml vars.yml
 ~~~
+
+#### inventory.in 파일 비교
 
 
 
@@ -93,21 +125,35 @@ diff vars_current.yml vars.yml
 ansible all -m shell --become --become-user=root -a 'yum remove --assumeyes $(rpm -qf --qf "::%{group}::%{name}\n" /etc/yum.repos.d/*.repo | sed -e "/^::SAS::/!d" -e "s/^::SAS:://" | sort -u)'
 ~~~
 
+![image-20180912201103700](../img/image-20180912201103700.png)
+
+> /etc/yum.repos.d/sas.repo 파일의 미러 리포지토리 경로가  upgrade 경로로 변경 됩니다.
 
 
 
+### 4. Viya3.4 인스톨
 
-### Viya3.4 인스톨
+#### 소프트웨어 설치전 Assesment 수행
+
+~~~{bash}
+ansible-playbook system-assessment.yml
+~~~
+
+
 
 #### 인스톨 수행
 
 ```
-ansible-playbook -vvv site.yml
+ansible-playbook -vvv site.yml # 포그라운드 수행
+or
+nohup ansible-playbook -vvv site.yml & # 백그라운드 수행
 ```
 
 
 
-### 신규 caslib 추가 및 권한 부여 
+### 5. 설치 후속 작업
+
+#### 신규 caslib 추가 및 권한 부여 
 
 ~~~
 /opt/sas/viya/home/share/deployment/add_new_caslib_controls.sh --sas-endpoint "http://viya.sas.com:80"
@@ -117,7 +163,19 @@ ansible-playbook -vvv site.yml
 
 
 
-### 서비스 비활성화
+#### 서비스 비활성화
+
+##### 부트스트랩 서비스 환경변수 재설정
+
+~~~{bash}
+. /opt/sas/viya/config/consul.conf
+~~~
+
+> 부트스트랩 서비스가 3.3 버전에서는 8500 포트로 서비스 되지만 3.4 부터는 8501 포트로 서비스됨
+
+
+
+##### Consul 토큰 설정
 
 ~~~{bash}
 export CONSUL_TOKEN=$(sudo cat /opt/sas/viya/config/etc/SASSecurityCertificateFramework/tokens/consul/default/client.token)
@@ -125,11 +183,11 @@ export CONSUL_TOKEN=$(sudo cat /opt/sas/viya/config/etc/SASSecurityCertificateFr
 
 
 
+##### launcher-server 등록 정보 검색
+
 ~~~{bash}
 cd /opt/sas/viya/home/bin/
 ~~~
-
-
 
 ~~~{bash}
 ./sas-bootstrap-config catalog service launcher-server
@@ -138,6 +196,8 @@ cd /opt/sas/viya/home/bin/
 ![image-20180912031320567](../img/image-20180912031320567.png)
 
 
+
+##### viya 3.3 버전의 launcher 서비스 비활성화
 
 ~~~{bash}
 ./sas-bootstrap-config agent service deregister c1b9671c-8de4-4f89-94e9-fac6f7569f79
@@ -148,6 +208,8 @@ cd /opt/sas/viya/home/bin/
 
 
 ![image-20180912031621678](../img/image-20180912031621678.png)
+
+
 
 
 
@@ -167,9 +229,9 @@ cd /opt/sas/viya/home/bin/
 
 
 
-### 서비스 비활성화 및 모니터링 제거
+#### 서비스 비활성화 및 모니터링 제거
 
-#### Viya 3.2 로부터 업그레이드 시 비활성화 및 모니터링 제거 대상 서비스
+##### Viya 3.2 로부터 업그레이드 시 비활성화 및 모니터링 제거 대상 서비스
 
 | 항목                    | 서비스명                             |
 | ----------------------- | ------------------------------------ |
@@ -179,7 +241,7 @@ cd /opt/sas/viya/home/bin/
 | SASVisualDataBuilder    | service name=sasvisualdatabuilder    |
 | data-preparation-plans  | service name=data-preparation-plans  |
 
-#### Viya 3.3 로부터 업그레이드 시 비활성화 및 모니터링 제거 대상 서비스
+##### Viya 3.3 로부터 업그레이드 시 비활성화 및 모니터링 제거 대상 서비스
 
 | 항목          | 서비스명                              |
 | ------------- | ------------------------------------- |
@@ -231,6 +293,15 @@ cd /opt/sas/viya/home/bin/
 ~~~
 
 ![image-20180912033508341](../img/image-20180912033508341.png)
+
+
+
+### 로그 링크 생성
+
+~~~bash
+ln -s /opt/sas/viya/config/var/log /var/log/sas/viya
+ln -s /opt/sas/spre/config/var/log /var/log/sas/spre
+~~~
 
 
 
