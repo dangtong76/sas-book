@@ -34,10 +34,8 @@ useradd sas
 useradd cas -g sas
 
 # 인스톨 디렉토리 생성
-mkdir /opt/sas
-mkdir /opt/sas/install
-
-chown -R sas:sas /opt/sas
+mkdir /opt/install
+chown -R sas:sas /opt/install
 ~~~
 
 

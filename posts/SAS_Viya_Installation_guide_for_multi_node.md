@@ -149,20 +149,30 @@ tar -cvf mirror.tar ./mirror
 
 tar 로 압축한 파일을 scp, rsync ftp 등을 이용해서 다른 노드의 동일한 디렉토리에 전송하고 압축을 풉니다.
 
-#### Hostname 변경
+### hostname 설정
 
-FQDN을 따르지 않는 모든 노드의 호스트네임을 변경합니다. 예를 들어, "www"가 호스트 이름이고, "mycompany.co.kr"이 도메인 이름이라면, FQDN은 "mycompany.co.kr"가 됩니다. 
+호스트네임을 설정하되 FQDN 으로 설정합니다. 예를 들면 viya.sas.com 이 FQDN 이 되고 viya 는 short hostname 이 됩니다.
 
-> 도메인 서버 등록과 상관없이 내부망 에서는 /etc/hosts 파일에만 등록하면 도메인에 우선 합니다. 
+```{bash}
+hostnamectl set-hostname viya
+hostnamectl set-hostname viya.sas.com --static
+```
 
-명령어 : hostnamectl set-hostname {host-name}
+/etc/hosts 파일을 열어 아래와 같이 입력 합니다.
 
-~~~bash
-hostnamectl set-hostname casc.mycompany.com  #controller node
-hostnamectl set-hostname casw1.mycompany.com #cas worker node1
-hostnamectl set-hostname casw2.mycompany.com #cas worker node2
-hostnamectl set-hostname casw3.mycompany.com #cas worker node3
-~~~
+> FQDN 및 Short 네임을 같이 입력 합니다.
+
+```{bash}
+192.168.56.101 viya.sas.com viya
+```
+
+아래 명령어를 통해 호스트네임을 검증합니다.
+
+```{bash}
+hostname -f # FQDN 출력
+hostname -s # shot hostname 출력
+hostname # FQEN 출력
+```
 
 
 
