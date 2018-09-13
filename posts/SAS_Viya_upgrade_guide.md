@@ -78,8 +78,7 @@ Ansible 을 통해 Viya3.4 업그레이드를  위해 ansible-playbook 을 생�
 
 ```
 # 압축 풀기
-gunzip sas-orchestration.tgz
-tar -xvf sas-orchestration.tar
+tar -xvf sas-orchestration.tgz
 
 # Ansible Play Book 생성
 ./sas-orchestration build --input /home/ec2-user/upgrade/SAS_Viya_deployment_data.zip --repository-warehouse "file:///opt/upgrade/mirror" --platform redhat
