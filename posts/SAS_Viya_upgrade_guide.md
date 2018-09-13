@@ -163,6 +163,15 @@ nohup ansible-playbook -vvv site.yml & # 백그라운드 수행
 
 
 
+#### 로그 확인
+
+~~~{bash}
+cd /opt/sas/viya/config/var/log
+tail -f ./*/default/*.log
+~~~
+
+
+
 ### 5. 설치 후속 작업
 
 #### 신규 caslib 추가 및 권한 부여 
