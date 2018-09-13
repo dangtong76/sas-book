@@ -116,9 +116,20 @@ cd /opt/upgrade/sas_viya_playbook
 diff vars_current.yml vars.yml
 ~~~
 
-#### inventory.in 파일 비교
+#### inventory.in 파일 복사
 
+```{bash}
+cp /opt/install/sas_viya_playbook/inventory.ini /opt/upgrade/sas_viya_playbook/inventory_current.ini
+```
 
+#### inventory.ini 파일 비교
+
+```{bash}
+cd /opt/upgrade/sas_viya_playbook
+diff inventory_current.ini inventory.ini 
+```
+
+#### 
 
 #### 기존 sas 리포지토리 비활성화
 
