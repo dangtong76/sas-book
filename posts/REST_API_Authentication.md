@@ -82,3 +82,16 @@ curl -X POST "https://server.example.com/SASLogon/oauth/token" \
       -H "Authorization: Bearer <TOKEN-STRING>"
 ~~~
 
+
+
+### 4. Refresh Token 을 이용한 토큰 갱신
+
+새로 토큰을 얻는것 보다 Refresh 토큰을 이용해 Access Token 을 갱신하는 것이 서버나 클라이언트 입장에서 부하가 적고, 토큰을 빨리 발급 받습니다. 수행 하게 되면 새로운 access_token 을 발급받게 됩니다.
+
+~~~
+curl -X POST "https://server.example.com/SASLogon/oauth/token" \
+      -H "Content-Type: application/x-www-form-urlencoded" \
+      -d "grant_type=refresh_token&refresh_token=<refresh_token> \
+      -u "app:mysecret"
+~~~
+

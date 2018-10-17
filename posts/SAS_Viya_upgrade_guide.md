@@ -6,6 +6,8 @@
 
 ### 1. 접속정보 및  디렉토리 구조 
 
+이번 업그레이드 교육을 위한 서버 정보입니다. 해당 서버에는 이미 3.3 버전이 설치 되어 있습니다.
+
 #### 접속정보
 
 ssh 접속을 위한 key 파일 : [다운로드](https://www.dropbox.com/s/293y8n3oonfma4c/sas-viya-key.pem?dl=1)
@@ -46,7 +48,6 @@ mkdir /home/ec2-user/upgrade # 업그레이드용 파일 보관
 | sas-orchestration-linux.tgz  | ansible 플레이북 생성                                    | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/command-line-interface.html) |
 | mirrormgr-linux.tgz          | 설치 파일 다운로드 및 yum 로컬 리포지토리 구성 (1-6참조) | [다운로드](https://support.sas.com/en/documentation/install-center/viya/deployment-tools/34/mirror-manager.html) |
 | SAS_Viya_deployment_data.zip | 라이센스 및 제품 목록 (1-4 참조)                         | 메일첨부                                                     |
-| OpenLDAP-master.tar.gz       | 계정관리용 LDAP                                          | [다운로드](https://gitlab.sas.com/canepg/OpenLDAP) (SAS 네트워크) |
 
 > 다운로드 받은 파일을 서버의 /home/ec2-user/upgrade 에 업로드 합니다.
 
@@ -97,6 +98,8 @@ tar -xvf SAS_Viya_playbook.tgz
 
 ### 3. 설정 파일 비교 및 구성
 
+이전 구성에서 수정한 부분을 3.4 용 설치 파일과 비교하여 옯겨 그대로 적어 줍니다. 
+
 #### 수정되지 않은 3.3 vars.yml 파일 복사
 
 ~~~{bash}
@@ -133,6 +136,8 @@ diff inventory_current.ini inventory.ini
 
 #### 기존 sas 리포지토리 비활성화
 
+/etc/yum.repos.d/ 디렉토리 밑의 yum 리포지토리 정보를 삭제 하는 명령 입니다. 해당 리포지토리는 3.3 버전의 리포지토리 정보가 있기 때문에 비활성화 시키지 않으명, 이전 버전을 중복해서 설치하게 됩니다.
+
 ~~~bash
 ansible all -m shell --become --become-user=root -a 'yum remove --assumeyes $(rpm -qf --qf "::%{group}::%{name}\n" /etc/yum.repos.d/*.repo | sed -e "/^::SAS::/!d" -e "s/^::SAS:://" | sort -u)'
 ~~~
@@ -147,9 +152,13 @@ ansible all -m shell --become --become-user=root -a 'yum remove --assumeyes $(rp
 
 #### 소프트웨어 설치전 Assesment 수행
 
+업그레이드를 위한 검증을 수행 할 뿐만 아니라, 위에서 비활성화 시킨 리포지토리 내용을 3.4 버전으로 새로 만들어 줍니다.
+
 ~~~{bash}
 ansible-playbook system-assessment.yml
 ~~~
+
+> /etc/yum.repos.d 디렉토리에 sas 리포지토리가 생성 되었는지 확인 하십시요
 
 
 
@@ -164,6 +173,8 @@ nohup ansible-playbook -vvv site.yml & # 백그라운드 수행
 
 
 #### 로그 확인
+
+설치가 끝나고 로그를 확인하면 Warning 메시지가 계속 나타 납니다. 설치는 정상적으로 되었지만, 신규 버전에서 사용하지 않는 서비스및 모니터링을 제거 해주어야 합니다. 해당 작업은 **설치 후속작업** 에서 수행 합니다.
 
 ~~~{bash}
 cd /opt/sas/viya/config/var/log
@@ -317,12 +328,21 @@ cd /opt/sas/viya/home/bin/
 
 
 
-### 로그 링크 생성
+#### 로그 링크 생성
 
 ~~~bash
 ln -s /opt/sas/viya/config/var/log /var/log/sas/viya
 ln -s /opt/sas/spre/config/var/log /var/log/sas/spre
 ~~~
+
+
+
+#### 로그 확인
+
+```{bash}
+cd /var/log/sas/viya
+tail -f ./*/default/*.log
+```
 
 
 

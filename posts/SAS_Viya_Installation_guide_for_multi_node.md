@@ -571,7 +571,7 @@ CAS_DISK_CACHE : /opt/sas/cascache
 
 ### 3-3 Validation 수행
 
-/opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행
+/opt/sas/install/sas_viya_playbook/  에서 아래 명령어 수행하게 되면 모든 서버의 ssh 등의 통신 상태를 점검하고, yum 리포지토리 정보를 vars.yml 에 설정된데로 재설정합니다.
 
 ~~~bash
 ansible-playbook system-assessment.yml 
