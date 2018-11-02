@@ -10,7 +10,9 @@ REST API 를 수행하기 위해 인증받는 부분은 아래 가이드를 참�
 
 ### POSTMAN 샘플
 
-(POSTMAN 샘플 다운로드)[]
+POSTMAN 에 아래 파일을 Import 하여 url 의 서버 주소만 바꿔서 수행 할 수 있습니다. 인증부터 작업 확인 까지 구성 되어 있습니다.
+
+[POSTMAN 샘플 다운로드](https://github.com/dangtong76/sas-book/blob/master/file/SAS_Viya_JOB_REST.postman_collection.json)
 
 ### 작업 수행 플로우
 
@@ -25,6 +27,8 @@ D(작업수행) -->F(작업상태 확인)
 ```
 
 ### 웹콘솔 에서 작업 등록 생성
+
+작업 등록과 관련한 좀더 자세한 사항은 [메뉴얼](<https://go.documentation.sas.com/?docsetId=jobexecug&docsetTarget=n055josnxfatfwn1pyr7p1ah7225.htm&docsetVersion=2.0&locale=ko>) 을 참조 하십시요.
 
 #### 1. JOB 정의
 
