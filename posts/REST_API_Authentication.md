@@ -66,7 +66,7 @@ curl -X POST "https://server.example.com/SASLogon/oauth/token" \
 
 수행 하게 되면  access 토큰을 리턴 하게 됩니다. 토근을 Client 에서 요청시  Authorization 항목에 넣어주면 됩니다.
 
-> 사실 Access token 과 Refresh token 2개가 조회 됩니다. Access Token 의 경우 24시간 동안 사용하지 않게 되면 만료가 되지만, Refresh token의 경우 무기한 사용 할 수 있습니다.
+> 사실 Access token 과 Refresh token 2개가 조회 됩니다. Access Token 의 경우 24시간 동안 사용하지 않게 되면 만료가 되지만, Refresh token의 경우 한달간 유효 하며, 사용하는 시점마다 유효기간이 연장 됩니다.
 
 
 
