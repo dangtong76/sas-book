@@ -36,7 +36,7 @@ D(작업수행) -->F(작업상태 확인)
 
 <http://viyaserver/SASJobExecution> 접속 후 Users > 계정 선택
 
-![image-20181102191152303](/Users/dangtong/Dropbox/dangtong-book/sas_book/img/image-20181102191152303.png)
+![image-20181102191152303](../img/image-20181102191152303.png)
 
 
 
@@ -78,7 +78,7 @@ D(작업수행) -->F(작업상태 확인)
 
 속성 보기 에서 "고급" 을 클릭하여 JOB ID(숫자 부분) 를 기억 또는 복사 해 둡니다.
 
-![img-2018-11-02 19-23-55](/Users/dangtong/Dropbox/dangtong-book/sas_book/img/img-2018-11-02 19-23-55.png)
+![img-2018-11-02 19-23-55](../img/img-2018-11-02 19-23-55.png)
 
 
 
