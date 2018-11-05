@@ -14,6 +14,10 @@ POSTMAN 에 아래 파일을 Import 하여 url 의 서버 주소만 바꿔서 �
 
 [POSTMAN 샘플 다운로드](https://github.com/dangtong76/sas-book/blob/master/file/SAS_Viya_JOB_REST.postman_collection.json)
 
+### SAS Viya REST API 참고 사이트
+
+[API 리스트 및 설명](https://developer.sas.com/apis/rest/)
+
 ### 작업 수행 플로우
 
 프로그램을 SAS Viya 의 JOB 으로 등록 하고 수행하기 위한 전체 적인 프로세스는 아래와 같습니다.
