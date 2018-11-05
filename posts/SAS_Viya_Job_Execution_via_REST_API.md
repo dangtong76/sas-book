@@ -38,7 +38,7 @@ D(작업수행) -->F(작업상태 확인)
 
 ##### 콘솔 접속
 
-<http://viyaserver/SASJobExecution> 접속 후 Users > 계정 선택
+<http://{viya-server-ip}/SASJobExecution> 접속 후 Users > 계정 선택
 
 ![image-20181102191152303](../img/image-20181102191152303.png)
 
