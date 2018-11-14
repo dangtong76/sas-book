@@ -18,7 +18,7 @@ ansible-playbook deploy-cleanup.yml
 
 ### 1-1. 설치 환경
 
-SAS Viya 설치 관련 내용은 아래와 같습니다.
+SAS Viya 설치 관련 내용은 아래와 같습니다..
 
 SAS Viya 의 설치 이미지는 Viya3.4 부터 지원되는 mirror manager를 통해 다운받아 설치 하도록 합니다.
 
