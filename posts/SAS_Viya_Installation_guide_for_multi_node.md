@@ -204,7 +204,7 @@ SAS Viya 에서는 아래 두가지 JDK 를 권장합니다.
 > OpenJDK7 이상 부터는 Oracle Idk 와 성능 차이가 거의 없으며 안정성 또한 많은 상용기업에서 사용하고 있기 때문에 문제가 되지 않습니다. 
 
 ~~~bash
-yum install java-1.8.0-openjdk
+yum install java-1.8.0-openjdk-devel
 ~~~
 
 
