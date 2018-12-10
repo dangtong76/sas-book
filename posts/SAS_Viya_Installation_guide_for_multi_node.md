@@ -12,8 +12,6 @@
 ansible-playbook deploy-cleanup.yml
 ~~~
 
-
-
 ## 1. 설치 사전 작업
 
 ### 1-1. 설치 환경
@@ -135,7 +133,7 @@ tar -xvf mirrormgr-linux.tar
 명령어 : mirrormgr mirror --deployment-data {path-to-SOE-file} --path {mirror-path} --platform {platform-tag} --log-file {log-file-path} --latest
 
 ```
-./mirrormgr mirror --deployment-data /home/ec2-user/SAS_Viya_deployment_data.zip --path /opt/install/mirror --platform x64-redhat-linux-6 --log-file /home/ec2-user/mirrormgr.log --latest
+./mirrormgr mirror --deployment-data /home/ec2-user/SAS_Viya_deployment_data.zip --path /opt/install/mirror --platform x64-redhat-linux-6 --log-file /home/ec2-user/mirrormgr.log --latest --workers 20
 ```
 
 다운받은 미러 리포지토리는 웹서버나 NFS를 이용해서 모든 노드에서 리포지토리로 인식 가능 합니다.
