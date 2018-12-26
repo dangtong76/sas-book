@@ -254,6 +254,14 @@ PasswordAuthentication yes
 #PasswordAuthentication no
 ~~~
 
+또는
+
+~~~
+sed -i.bak -e 's/\#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config;sed -i.bak -e 's/PasswordAuthentication no/\#PasswordAuthentication no/g' /etc/ssh/sshd_config;service sshd restart
+~~~
+
+
+
 #### sshd 데몬 재가동
 
 ~~~
@@ -284,6 +292,12 @@ ssh-copy-id casw3.mycompany.com
 #PermitEmptyPasswords no
 PasswordAuthentication no
 ```
+
+또는
+
+~~~
+sed -i.bak -e 's/PasswordAuthentication yes/\#PasswordAuthentication yes/g' /etc/ssh/sshd_config;sed -i.bak -e 's/\#PasswordAuthentication no/PasswordAuthentication no/g' /etc/ssh/sshd_config;service sshd restart
+~~~
 
 
 
@@ -514,6 +528,23 @@ hostname -s
 
 
 
+### 2.6 공유 디스크 마운트
+
+만약 Controller 노드와 Backup Controller 노드를 구성 한다면,  /opt/sas/viya/config/data/cas 디렉토리를 공유 디스크로 구성 해야 합니다. 해당 폴더는 유저 컨텐츠가 저장 되는 디렉토리 입니다.
+
+아마존을 예로 들어 설명하며, 아마존 aws 에는 efs 라는 공유 파일 서비스가 존재 합니다. efs 오브젝트를 생성하고 다음과 같이 모든 CAS 노드에 마운트 합니다.
+
+efs URL 은 'fs-c46db425.efs.us-east-1.amazonaws.com' 이라고 가정합니다.
+
+~~~
+mkdir -p /opt/sas/viya/config/data/cas
+chown -R sas:sas /opt/sas/viya/config
+chmod -R 755 /opt/sas/viya/config
+mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-c46db425.efs.us-east-1.amazonaws.com:/ /opt/sas/viya/config/data/cas
+~~~
+
+
+
 ## 3.Installation
 
 ### 3-1 검증 및 인스톨
@@ -549,6 +580,8 @@ casw3
 
 
 
+[casdatasvrc] 호스트 그룹의 호스트를 default 설정인 DeployTarget 으로 설정 하지 않을 경우(inventory.ini 파일에서 DeployTarget 이라는 명칭을 사용하지 않거나, 다른 노드에 설정 할 경우) , 3-2 의 var.yml 의 sasdatasvrc 항목을 수정 해야 합니다. [3-2 sasdatasvrc 수정] 참조 
+
 ### 3-2 vars.yml  수정
 
 ~~~BASH
@@ -564,6 +597,8 @@ casenv_admin_user : cas
 # CAS_DISK_CACHE를 주석 해제 후 /opt/sas/cacscache 로 경로 설정
 CAS_DISK_CACHE : /opt/sas/cascache
 ~~~
+
+ #### sasdatasvrc 수정
 
 
 
@@ -637,19 +672,60 @@ cd OpenLDAP-master
 
 ### 4-1. all.yml 수정
 
-inventory.ini 를 열어 수정 합니다. apple 이라고 되어 있는 부분을 openldap 서버의 호스트명으로 변경합니다.
+inventory.ini 를 열어 수정 합니다. 
 
-`shift` + `:` 를 눌러 아래와 같이 일괄 변경 합니다.
+openldap 서버는 1곳에 설치 되고 , 모든 노드마다 openldap client 가 설치 되어 야합니다.
 
 ~~~
-%s/apple/{host-name}/g
+#####################################################################
+## Enter your hosts definitions here!
+## you can have one or more hosts
+#####################################################################
+# 설치될 서버로 호스트 주소를 적어 줍니다.casc 의 경우 ansible 이 설치된 노드이기 때문에
+# local 로 해도 무방합니다.
+casc     ansible_connection=local
+casb	 ansible_host=casb.sas.com
+casw1	 ansible_host=casw1.sas.com
+statefull ansible_host=statefull.sas.com
+stateless ansible_host=stateless.sas.com
+
+#orange    ansible_host=server1.customer.com
+#cherry    ansible_host=server2.customer.com
+#raspberry ansible_host=server3.customer.com
+#peach     ansible_host=server4.customer.com  ansible_ssh_user=root
+
+#####################################################################
+## This is how you tell the playbook where to install OpenLDAP SERVER
+## there should be only one nickname in here
+#####################################################################
+[openldapserver]
+casc  #openldap 서버 설치 노드
+
+#####################################################################
+## This/these servers will be configured to authenticate against the openldap server
+## you may or may not want the same host here as in the openldapserver group
+## this host group can have one or more machines in it
+#####################################################################
+[openldapclients] #openldap client 는 모든 노드에 설치
+casc
+casb
+casw1
+statefull
+stateless
+#####################################################################
+## Don't touch the stuff below
+#####################################################################
+[openldapall:children]
+openldapserver
+openldapclients
+
 ~~~
 
 
 
 ### 4-2 inventory.ini 수정
 
-Inventory.in 파일에서  아래 부분을 변경 합니다.
+Inventory.in 파일에서  아래와 같이 변경 합니다.
 
 ~~~{bash}
 ## you probably want to update these 2 variables.
