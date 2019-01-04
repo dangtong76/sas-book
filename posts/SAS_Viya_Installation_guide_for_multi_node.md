@@ -2,6 +2,8 @@
 
 [TOC]
 
+
+
 ## 0. Viya 삭제
 
 삭제시 자동으로 인스톨 디렉토리를 '_{sequence_number}'를 postfix 로 붙여 백업 하게 됩니다.
@@ -230,9 +232,6 @@ tar -xvf SAS_Viya_playbook.tgz
 ```
 
 > Platform TAG 정보는 oracle linux , redhat linux 의 경우 **redhat**, 수세리눅스의 경우 **suse**
->
-
-
 
 ### 1-8. SSH 키생성 및 복사
 
