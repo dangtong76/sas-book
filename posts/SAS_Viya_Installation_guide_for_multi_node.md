@@ -468,6 +468,12 @@ MaxStartups 100
 MaxSessions 100
 ~~~
 
+~~~bash
+sed -i.bak -e 's/\#MaxStartups 10:30:100/MaxStartups 100/g' -e 's/\#MaxSessions 10/MaxSessions 100/g' /etc/ssh/sshd_config
+~~~
+
+
+
 + /etc/security/limits.conf 파일 수정
 
 ~~~
@@ -480,6 +486,20 @@ MaxSessions 100
 sas	-	nofile	150000
 *	-	nofile	150000
 sas	-	stack	10240
+~~~
+
+~~~
+cat <<EOT >> /etc/security/limits.conf
+* soft nproc 100000
+* hard nproc 100000
+* soft nofile 350000
+* hard nofile 350000
+* soft stack 10240
+* hard stack 32768
+sas - nofile 150000
+* - nofile 150000
+sas - stack 10240
+EOT
 ~~~
 
 + /etc/security/limits.d/20-nproc.conf 파일 수정
@@ -502,6 +522,20 @@ vm.max_map_count=262144
 vm.overcommit_memory=0
 ~~~
 
+~~~
+cat <<EOT >> /etc/sysctl.conf 
+kernel.shmmni = 4096
+kernel.sem = 512 32000 256 1024
+net.core.somaxconn = 2048
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 262144
+vm.max_map_count=262144
+vm.overcommit_memory=0
+EOT
+~~~
+
+
+
 + 설정 변경 확인
 
 ~~~
@@ -514,6 +548,12 @@ sysctl -p
 DefaultTimeoutStartSec=1800s
 DefaultTimeoutStopSec=1800s
 ~~~
+
+~~~bash
+sed -i.bak -e 's/\#DefaultTimeoutStartSec=90s/DefaultTimeoutStartSec=1800s/g' -e 's/\#DefaultTimeoutStopSec=90s/DefaultTimeoutStopSec=1800s/g' /etc/systemd/system.conf 
+~~~
+
+
 
 ### 2-5 hostname 확인
 
