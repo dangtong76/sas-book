@@ -88,7 +88,7 @@ chown -R sas:sas /opt
 
 
 
-### 1-4. 파일 업로드
+### 1-4. 파일 업로드.
 
 SOE (SAS Order Email) 에 첨부된 SAS_Viya_deployment_data.zip 파일을 다운받아 서버의 HOME  디렉토리에 업로드
 
