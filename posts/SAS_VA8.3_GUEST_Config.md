@@ -124,6 +124,30 @@ Guest 계정으로 별도의 로그인 없이 리포트가 보이는 것을 확�
 
 
 
+### 5. 외부 사이트 삽입
+
+#### 삽입 가능한 링크 복사
+
+![image-20190305183251129](../img/image-20190305183251129.png)
+
+#### HTML 파일에 삽입
+
+~~~
+<html>
+    <head>
+    </head>
+    <body>
+        <iframe height="768" width="1024" src="https://xxx.xxx.xxx.xxx/SASReportViewer/?reportUri=%2Freports%2Freports%2F0675b1a6-6cd2-485a-be73-c7984c2dc9b1&page=vi6&sso_guest=true&reportViewOnly=true&appSwitcherDisabled=true"></iframe>
+    </body>
+</html>
+~~~
+
+
+
+#### 브라우저에서 테스트
+
+![image-20190305183407031](../img/image-20190305183407031.png)
+
 참고 : [GUEST 접속 관련 설정 온라인 메뉴얼](https://go.documentation.sas.com/?docsetId=calauthmdl&docsetTarget=n067qoyrgu1yohn19nq4ehy8o0b3.htm&docsetVersion=3.3&locale=en#p0jrliplx9dz0an11jdxlc7s15wq)
 
 
