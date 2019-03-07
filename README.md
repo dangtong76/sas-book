@@ -24,6 +24,7 @@
 ### Visual Analytics
 
 + [Data Driven Content 가이드](./posts/SAS_VisualAnalytics_Data_Driven_Content.md)
++ [GUEST 계정 활성화 및 인증없는 리포트 연계를 위한 가이드](./posts/SAS_VA8.3_GUEST_Config.md)
 
 
 
