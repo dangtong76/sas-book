@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "5bd54d36-51ec-461c-ab04-0b8741746ad4",
+		"name": "SAS Viya JOB for REST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01_consul_token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "sask@123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "viyademo01",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Consul-Token",
+						"value": "5a5d0440-d151-475d-96e8-0db48c6c69c2"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/SASLogon/oauth/clients/consul?callback=false&serviceId=amazon",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"SASLogon",
+						"oauth",
+						"clients",
+						"consul"
+					],
+					"query": [
+						{
+							"key": "callback",
+							"value": "false"
+						},
+						{
+							"key": "serviceId",
+							"value": "amazon"
+						}
+					]
+				},
+				"description": "get consul token"
+			},
+			"response": []
+		},
+		{
+			"name": "02_register_client",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiIxMTk4MTg3MGU4Y2Q0NGE2YTBmNDk2MGU2NmM0YjY1MCIsInN1YiI6InNhcy5hZG1pbiIsImF1dGhvcml0aWVzIjpbImNsaWVudHMucmVhZCIsImNsaWVudHMuc2VjcmV0IiwidWFhLnJlc291cmNlIiwiY2xpZW50cy53cml0ZSIsInVhYS5hZG1pbiIsImNsaWVudHMuYWRtaW4iLCJzY2ltLndyaXRlIiwic2NpbS5yZWFkIl0sInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJzYXMuYWRtaW4iLCJjaWQiOiJzYXMuYWRtaW4iLCJhenAiOiJzYXMuYWRtaW4iLCJncmFudF90eXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwicmV2X3NpZyI6ImM3NjM5NmRmIiwiaWF0IjoxNTQwOTkwOTMxLCJleHAiOjE1NDEwMzQxMzEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3QvU0FTTG9nb24vb2F1dGgvdG9rZW4iLCJ6aWQiOiJ1YWEiLCJhdWQiOlsic2FzLioiLCJ1YWEiLCJzYXMuYWRtaW4iXX0.AvKdpGnVB1ei7rbv_UeWkPoOrCRtG9-C8qJIgfrar43xFv9duRxVzlbTpHNf7eVix91nFa_LLk0YgvNcpCIZ3-_zZr4Sa9sbfUpsIZtnpwhyC2Ns3dORzRMgSdO7XPJjEvpN8GizcOIEP7dirqDaXBn1zDmDwIDb2NwmyqVbcHQ"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n          \"client_id\": \"amazon\",\r\n          \"client_secret\": \"sask@123\",\r\n          \"scope\": [\"openid\"],\r\n          \"authorized_grant_types\": [\"password\"],\r\n          \"access_token_validity\": 43199\r\n}"
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/SASLogon/oauth/clients",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"SASLogon",
+						"oauth",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_get_Oauth_token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "sask@123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "amazon",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "viyademo01",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "sask@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/SASLogon/oauth/token?",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"SASLogon",
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"disabled": true
+						},
+						{
+							"key": "username",
+							"value": "viyademo01",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "sask@123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03_get_Oauth_token_via_refresh_token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "sask@123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "amazon",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiI1M2Q2NTQ0NWEzYTM0ZmM2Yjc1ZGViNzM2NjRiN2QyYy1yIiwic3ViIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwic2NvcGUiOlsidWFhLmFkbWluIl0sImlhdCI6MTU0MTEzOTQxOCwiZXhwIjoxNTQzNzMxNDE4LCJjaWQiOiJhbWF6b24iLCJjbGllbnRfaWQiOiJhbWF6b24iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiZ3JhbnRfdHlwZSI6InBhc3N3b3JkIiwidXNlcl9uYW1lIjoidml5YWRlbW8wMSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsInJldl9zaWciOiI2ZTRkMzA4YiIsImF1ZCI6WyJhbWF6b24iLCJ1YWEiXX0.kEufuH9IVwPyjnnd69VzztoSIDCg7iwkD1I7Jp7ZQQky-z5I3kWFBfocVnZhKQsU9pnje7Va7udo-zBoafVdAz_8lZ6DgwuXCdoq0sguwBpMMB8FFpH5B8XCDJg_4npvfVs2YJuIIVUSeEXdvXlYdCIFiWqtghe9btbziMmNgdc",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://172.27.64.231/SASLogon/oauth/token",
+					"protocol": "http",
+					"host": [
+						"172",
+						"27",
+						"64",
+						"231"
+					],
+					"path": [
+						"SASLogon",
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04.Get_Job_Definition",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiIyYjM0YjFlNmQzODc0ZmNmYjAxMzEzNDNlMGVmZjAyYSIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDEwODgxOTAsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTA4ODE5MCwiZXhwIjoxNTQxMTMxMzg5LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.I70YQ_7WIoaUeCfRG_Wzgluo_WAECMjUsq9mwuRuRVQQ3kpofeLrFySkDWL0mw7RTlhLQ6Fgu9J8NIA_UgzWqalkjVZIhHLtf6mh808dRz09QiXzVmSh9CTTMSMbiTVDlKKnKbEwszq0i6lTwrqAUsOdyqmup_3UBpd8l35i6vE",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.sas.collection+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobDefinitions/definitions",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobDefinitions",
+						"definitions"
+					]
+				},
+				"description": "get job def"
+			},
+			"response": []
+		},
+		{
+			"name": "05.Get_Specific_Job_Definoition",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJmZTMwNzNlYzllOWI0ODUyYTFlMWMwZTQ2NDc4MjY3MCIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDExMjI5NTIsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTEyMjk1MiwiZXhwIjoxNTQxMTY2MTUxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.Jf0OxBei-VLd-LoRcC-VqkosggyBWUKvwMLSDslP9in4CWvaIt6zKCcESz86YOnbwk3aWzwykPDMFtE6ZCrM7hUFRyT7NJ6v3t0UsEEZdTcU_tgB16EHKbd11SdtJ7Z3fVntuM7yJrBrbs1j2u8bE-CkkirxuhaMdKNpRUG969s",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.sas.job.definition+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobDefinitions",
+						"definitions",
+						"47563556-af70-4cf9-98d9-cfbf9992cc5b"
+					]
+				},
+				"description": "Get_Specific_Job_Definoition"
+			},
+			"response": []
+		},
+		{
+			"name": "06.Create_Job_Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJmZTMwNzNlYzllOWI0ODUyYTFlMWMwZTQ2NDc4MjY3MCIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDExMjI5NTIsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTEyMjk1MiwiZXhwIjoxNTQxMTY2MTUxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.Jf0OxBei-VLd-LoRcC-VqkosggyBWUKvwMLSDslP9in4CWvaIt6zKCcESz86YOnbwk3aWzwykPDMFtE6ZCrM7hUFRyT7NJ6v3t0UsEEZdTcU_tgB16EHKbd11SdtJ7Z3fVntuM7yJrBrbs1j2u8bE-CkkirxuhaMdKNpRUG969s",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.sas.job.execution.job.request+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n            \"creationTimeStamp\": \"2018-08-12T00:11:42.515Z\",\n            \"modifiedTimeStamp\": \"2018-08-12T00:11:42.515Z\",\n            \"createdBy\": \"viyademo01\",\n            \"modifiedBy\": \"viyademo01\",\n            \"version\": 3,\n            \"id\": \"\",\n            \"name\": \"job_test2\",\n            \"description\": \"\",\n            \"jobDefinition\": {\n    \"creationTimeStamp\": \"2018-11-01T15:56:23.686Z\",\n    \"modifiedTimeStamp\": \"2018-11-02T08:07:46.193Z\",\n    \"createdBy\": \"viyademo01\",\n    \"modifiedBy\": \"viyademo01\",\n    \"version\": 2,\n    \"id\": \"47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n    \"name\": \"job_test.sas\",\n    \"description\": \"\",\n    \"type\": \"Compute\",\n    \"parameters\": [],\n    \"code\": \"options cashost=\\\"172.27.64.231\\\" casport=5570;\\n\\ncas mySession1 user=viyademo01;\\n\\ncaslib _all_ assign;\\n\\ncas terminate mySession1\\n\",\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"rel\": \"self\",\n            \"href\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"uri\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"type\": \"application/vnd.sas.job.definition\"\n        },\n        {\n            \"method\": \"GET\",\n            \"rel\": \"alternate\",\n            \"href\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"uri\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"type\": \"application/vnd.sas.summary\"\n        },\n        {\n            \"method\": \"PUT\",\n            \"rel\": \"update\",\n            \"href\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"uri\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"type\": \"application/vnd.sas.job.definition\",\n            \"responseType\": \"application/vnd.sas.job.definition\"\n        },\n        {\n            \"method\": \"DELETE\",\n            \"rel\": \"delete\",\n            \"href\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n            \"uri\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\"\n        }\n    ],\n    \"properties\": []\n},\n            \"arguments\": {\n                \"_userlocale\": \"ko\",\n                \"_omitTextLog\": \"true\",\n                \"_clientname\": \"SASJobExecution\",\n                \"_omitSessionResults\": \"true\",\n                \"_rmthost\": \"172.27.61.84\",\n                \"_rmtaddr\": \"172.27.61.84\",\n                \"_variableFilter\": \"eq(name,'_STATUS_MESSAGE')\",\n                \"_omitTextListing\": \"true\",\n                \"_apslist\": \"_clientname,_csrf,_htua,_program,_rmtaddr,_rmthost,_url,_userlocale,_version,_xforward\",\n                \"_contextName\": \"SAS Job Execution compute context\",\n                \"_addJesBeginEndMacros\": \"true\",\n                \"_xforward\": \"172.27.64.231\",\n                \"_omitJsonLog\": \"true\",\n                \"_program\": \"/Users/viyademo01/job_test.sas\",\n                \"_htua\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.220 Whale/1.3.51.7 Safari/537.36\",\n                \"_omitJsonListing\": \"true\",\n                \"_url\": \"/SASJobExecution/\",\n                \"_version\": \"SASJobExecution 버전 2.1\"\n            },\n            \"properties\": [\n                {\n                    \"name\": \"jobdefid\",\n                    \"value\": \"47563556-af70-4cf9-98d9-cfbf9992cc5b\"\n                },\n                {\n                    \"name\": \"program\",\n                    \"value\": \"/Users/viyademo01/job_test.sas\"\n                }\n            ],\n            \"createdByApplication\": \"SASJobExecution\",\n            \"links\": [],\n            \"expiresAfter\": \"PT24H\"\n        }"
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobExecution/jobRequests",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobExecution",
+						"jobRequests"
+					]
+				},
+				"description": "Get_Specific_Job_Definoition"
+			},
+			"response": []
+		},
+		{
+			"name": "07.Get_Job_Request_list",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJmZTMwNzNlYzllOWI0ODUyYTFlMWMwZTQ2NDc4MjY3MCIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDExMjI5NTIsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTEyMjk1MiwiZXhwIjoxNTQxMTY2MTUxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.Jf0OxBei-VLd-LoRcC-VqkosggyBWUKvwMLSDslP9in4CWvaIt6zKCcESz86YOnbwk3aWzwykPDMFtE6ZCrM7hUFRyT7NJ6v3t0UsEEZdTcU_tgB16EHKbd11SdtJ7Z3fVntuM7yJrBrbs1j2u8bE-CkkirxuhaMdKNpRUG969s"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/vnd.sas.collection+json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobExecution/jobRequests",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobExecution",
+						"jobRequests"
+					]
+				},
+				"description": "Get_Specific_Job_Definoition"
+			},
+			"response": []
+		},
+		{
+			"name": "08.execute job",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJmZTMwNzNlYzllOWI0ODUyYTFlMWMwZTQ2NDc4MjY3MCIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDExMjI5NTIsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTEyMjk1MiwiZXhwIjoxNTQxMTY2MTUxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.Jf0OxBei-VLd-LoRcC-VqkosggyBWUKvwMLSDslP9in4CWvaIt6zKCcESz86YOnbwk3aWzwykPDMFtE6ZCrM7hUFRyT7NJ6v3t0UsEEZdTcU_tgB16EHKbd11SdtJ7Z3fVntuM7yJrBrbs1j2u8bE-CkkirxuhaMdKNpRUG969s",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/vnd.sas.job.execution.job+json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobExecution/jobRequests/91e17162-19bc-4c7a-b9ff-5d8f36fca2c2/jobs",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobExecution",
+						"jobRequests",
+						"91e17162-19bc-4c7a-b9ff-5d8f36fca2c2",
+						"jobs"
+					]
+				},
+				"description": "Get_Specific_Job_Definoition"
+			},
+			"response": []
+		},
+		{
+			"name": "09.get_job_status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImxlZ2FjeS10b2tlbi1rZXkiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJmZTMwNzNlYzllOWI0ODUyYTFlMWMwZTQ2NDc4MjY3MCIsInN1YiI6IjY1ZTY1YzY5LWUyNmMtNDNhNS05MGM2LTA1N2E5NmZiNmE0MSIsInNjb3BlIjpbInVhYS5hZG1pbiJdLCJjbGllbnRfaWQiOiJhbWF6b24iLCJjaWQiOiJhbWF6b24iLCJhenAiOiJhbWF6b24iLCJncmFudF90eXBlIjoicGFzc3dvcmQiLCJ1c2VyX2lkIjoiNjVlNjVjNjktZTI2Yy00M2E1LTkwYzYtMDU3YTk2ZmI2YTQxIiwiZXh0X2lkIjoidWlkPXZpeWFkZW1vMDEsb3U9dXNlcnMsZGM9dml5YTM0LGRjPWNvbSIsIm9yaWdpbiI6ImxkYXAiLCJ1c2VyX25hbWUiOiJ2aXlhZGVtbzAxIiwiZW1haWwiOiJ2aXlhZGVtbzAxQHNhc3ZpeWEwMS5hcGFjLnNhcy5jb20iLCJhdXRoX3RpbWUiOjE1NDExMjI5NTIsInJldl9zaWciOiI2ZTRkMzA4YiIsImlhdCI6MTU0MTEyMjk1MiwiZXhwIjoxNTQxMTY2MTUxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiemlkIjoidWFhIiwiYXVkIjpbImFtYXpvbiIsInVhYSJdfQ.Jf0OxBei-VLd-LoRcC-VqkosggyBWUKvwMLSDslP9in4CWvaIt6zKCcESz86YOnbwk3aWzwykPDMFtE6ZCrM7hUFRyT7NJ6v3t0UsEEZdTcU_tgB16EHKbd11SdtJ7Z3fVntuM7yJrBrbs1j2u8bE-CkkirxuhaMdKNpRUG969s"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"version\": 3,\n  \"id\": \"47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n  \"name\": \"job_test\",\n  \"description\": \"job_test\",\n  \"creationTimeStamp\": \"\",\n  \"modifiedTimeStamp\": \"\",\n  \"createdBy\": \"viyademo01\",\n  \"modifiedBy\": \"viyademo01\",\n  \"jobDefinitionUri\": \"/jobDefinitions/definitions/47563556-af70-4cf9-98d9-cfbf9992cc5b\",\n  \"jobDefinition\": {},\n  \"expiresAfter\": \"\",\n  \"arguments\": {},\n  \"properties\": {\n    \"property1\": \"\",\n    \"property2\": \"\"\n  },\n  \"createdByApplication\": \"\",\n  \"links\": [\n    {\n      \"method\": \"string\",\n      \"rel\": \"createJobRequest\",\n      \"uri\": \"string\",\n      \"href\": \"string\",\n      \"title\": \"string\",\n      \"type\": \"string\",\n      \"itemType\": \"string\",\n      \"responseType\": \"string\",\n      \"responseItemType\": \"string\"\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://sasviya01.apac.sas.com/jobExecution/jobs/494b9ef1-5492-4542-a4fd-3aa543d7c4e1/state",
+					"protocol": "http",
+					"host": [
+						"sasviya01",
+						"apac",
+						"sas",
+						"com"
+					],
+					"path": [
+						"jobExecution",
+						"jobs",
+						"494b9ef1-5492-4542-a4fd-3aa543d7c4e1",
+						"state"
+					]
+				},
+				"description": "Get_Specific_Job_Definoition"
+			},
+			"response": []
+		}
+	]
+}
