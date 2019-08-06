@@ -14,6 +14,8 @@
 
 실습에 사용되는 데이터셋 은 아래 URL 에서 다운 받을수 있습니다.
 
+[다운로드](https://www.dropbox.com/sh/bcgcxwb1yh54g0g/AABebiZNPzAnfw7WBoKjInn6a?dl=0)
+
 ## 1. SAS Drive
 
 ### 실습 1-1. 빠른 엑세스 영역에 컨텐츠 추가 하기
