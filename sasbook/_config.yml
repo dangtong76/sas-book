@@ -1,0 +1,10 @@
+title: 당통의 정리노트
+email: dangtong@gmail.com
+description: IT관련 다양한 분야의 기술을 정리한 블로그 입니다.
+baseurl: ''
+url: ''
+twitter_username: jekyllrb
+github_username: jekyll
+theme: minima
+plugins:
+  - jekyll-feed
